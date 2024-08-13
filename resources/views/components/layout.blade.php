@@ -13,33 +13,41 @@
     <header class="">
         <nav class="navbar navbar-expand-lg navbar-light bg-secondary">
             <div class="container-fluid">
-                <a class="navbar-brand" href="">individuy Election</a>
+                <a class="navbar-brand" href="/">individuy Election</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="">Home</a>
+                        <a class="nav-link active" aria-current="page" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="">Votazioni</a>
+                        <a class="nav-link" href="/vote-lists">Votazioni</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="">Classifiche</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="">Federazioni</a>
+                        <a class="nav-link" href="/federations">Federazioni</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Utente
+                            {{ Auth::check() ? Auth::user()->username : 'Utente' }}
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-
-                                <li><a class="dropdown-item" href="index.php?page=login">Login</a></li>
-                                <li><a class="dropdown-item" href="index.php?page=signup">Signup</a></li>
-
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            @guest
+                                <li><a class="dropdown-item" href="/login">Login</a></li>
+                                <li><a class="dropdown-item" href="/register">Signup</a></li>
+                            @endguest
+                            @auth
+                                <li><a class="dropdown-item" href="/profile">Profilo</a></li>
+                                <form  method="POST" action="/logout">
+                                    @csrf
+                                    @method('DELETE')
+                                    <li><button class="dropdown-item" >Logout</button></li>
+                                </form>
+                            @endauth
                         </ul>
                     </li>
                 </ul>
@@ -55,29 +63,9 @@
     <!-- Main -->
     <main class="container min-height-main">
         <div class="py-5">
-            <h1 class="text-center mb-5">Bentornato nella Piattaforma di Votazione di individuy Italiani!</h1>
+           
             <div class="row">
-                <!-- Sezione Votazione -->
-                <div class="col-md-6 mb-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h2 class="card-title">Votazioni</h2>
-                            <p class="card-text">Questa sezione permetterà agli utenti di votare per i loro show o incontri preferiti.</p>
-                            <a href="" class="btn btn-primary">Vai alle Votazioni</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Sezione Classifiche -->
-                <div class="col-md-6 mb-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h2 class="card-title">Classifiche</h2>
-                            <p class="card-text">Qui vengono mostrate le classifiche basate sui voti degli utenti.</p>
-                            <a href="" class="btn btn-primary">Vedi le Classifiche</a>
-                        </div>
-                    </div>
-                </div>
+                {{ $slot }}
             </div>
         </div>
     </main>
