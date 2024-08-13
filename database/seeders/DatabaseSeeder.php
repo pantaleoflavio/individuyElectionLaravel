@@ -1,23 +1,38 @@
 <?php
 
-namespace Database\Seeders;
-
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Category;
+use App\Models\Federation;
 use Illuminate\Database\Seeder;
+use Database\Seeders\RankingSeeder;
+use Database\Seeders\TagTeamSeeder;
+use Database\Seeders\WrestlerSeeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
+    public function run()
     {
-        // User::factory(10)->create();
+        // Creazione utente manuale
+        User::create([
+            'name' => 'John Doe',
+            'username' => 'johndoe',
+            'email' => 'john@doe.com',
+            'password' => Hash::make('password'),
+            'role' => 'admin',
+            'image_path' => 'profile_images/john_doe_image.jpg',
+        ]);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Creazione factory
+        User::factory()->count(2)->create();
+        $federations = Federation::factory()->count(5)->create();
+        $categories = Category::factory()->count(10)->create();
+
+        // Chiamata ai seeder
+        $this->call([
+            RankingSeeder::class,
+            WrestlerSeeder::class,
+            TagTeamSeeder::class,
         ]);
     }
 }
