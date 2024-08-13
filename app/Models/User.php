@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -18,8 +19,10 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
+        'image_path',
     ];
 
     /**
@@ -44,4 +47,15 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function votesWrestler(): HasMany
+    {
+        return $this->hasMany(VoteWrestler::class);
+    }
+
+    public function votesTagTeam(): HasMany
+    {
+        return $this->hasMany(VoteTagTeam::class);
+    }
+
 }
