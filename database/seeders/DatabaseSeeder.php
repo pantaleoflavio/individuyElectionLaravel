@@ -3,6 +3,8 @@
 use App\Models\User;
 use App\Models\Category;
 use App\Models\Federation;
+use App\Models\VoteTagTeam;
+use App\Models\VoteWrestler;
 use Illuminate\Database\Seeder;
 use Database\Seeders\RankingSeeder;
 use Database\Seeders\TagTeamSeeder;
@@ -25,8 +27,8 @@ class DatabaseSeeder extends Seeder
 
         // Creazione factory
         User::factory()->count(2)->create();
-        $federations = Federation::factory()->count(5)->create();
-        $categories = Category::factory()->count(10)->create();
+        Federation::factory()->count(5)->create();
+        Category::factory()->count(10)->create();
 
         // Chiamata ai seeder
         $this->call([
@@ -34,5 +36,15 @@ class DatabaseSeeder extends Seeder
             WrestlerSeeder::class,
             TagTeamSeeder::class,
         ]);
+
+        // Popolamento di VoteWrestler evitando duplicati
+        foreach (VoteWrestler::factory()->count(25)->make() as $voteWrestler) {
+            VoteWrestler::insertOrIgnore($voteWrestler->toArray());
+        }
+
+        // Popolamento di VoteTagTeam evitando duplicati
+        foreach (VoteTagTeam::factory()->count(20)->make() as $voteTagTeam) {
+            VoteTagTeam::insertOrIgnore($voteTagTeam->toArray());
+        }
     }
 }
