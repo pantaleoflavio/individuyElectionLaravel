@@ -26,7 +26,7 @@
                         <a class="nav-link" href="/vote-lists">Votazioni</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="">Classifiche</a>
+                        <a class="nav-link" href="/rankings">Classifiche</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/federations">Federazioni</a>

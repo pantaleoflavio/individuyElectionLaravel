@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Auth;
 
 class VoteController extends Controller
 {
+    public function index()
+    {
+        return view('votes.index');
+    }
 
     public function showWrestlerVoteForm(Wrestler $wrestler, Ranking $ranking)
     {

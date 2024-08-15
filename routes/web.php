@@ -34,11 +34,14 @@ Route::middleware(['auth.custom'])->group(function () {
 });
 
 // Ranking Routes
-Route::get('/vote-lists', [RankingController::class, 'index']);
+Route::get('/rankings', [RankingController::class, 'index'])->name('rankings.index');
+Route::get('/rankings/show/{ranking}', [RankingController::class, 'show'])->name('rankings.show');
+
 Route::get('/ranking-list-wrestler', [RankingController::class, 'ranking_list_wrestler']);
 Route::get('/ranking-list-tag-team', [RankingController::class, 'ranking_list_tag_team']);
 
 // Vote Routes
+Route::get('/vote-lists', [VoteController::class, 'index']);
 Route::middleware(['auth.custom'])->group(function () {
     Route::get('/voteWrestler/{wrestler}/{ranking}', [VoteController::class, 'showWrestlerVoteForm'])->name('vote.wrestler.form');
     Route::post('/voteWrestler', [VoteController::class, 'wrestlerVoteStore'])->name('vote.wrestler.store');
