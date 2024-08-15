@@ -52,7 +52,7 @@ class RankingController extends Controller
                 return $result;
             });
     
-        } elseif ($ranking->type == 'tag_team') {
+        } elseif ($ranking->type == 'tag team') {
             // Fetch dei voti e calcolo della media per i tag team
             $results = DB::table('votes_tag_team')
                 ->select('tag_team_id', DB::raw('AVG(vote) as average_vote'))

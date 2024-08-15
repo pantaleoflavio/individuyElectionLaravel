@@ -22,7 +22,7 @@ class RankingFactory extends Factory
         return [
             'name' => $this->faker->sentence,
             'description' => $this->faker->paragraph,
-            'type' => $this->faker->randomElement(['wrestler', 'tag team', 'federation']),
+            'type' => $this->faker->randomElement(['wrestler', 'tag team']), // add later 'federation' or other entities
             'status' => $this->faker->boolean,
             'category_id' => $this->faker->numberBetween(1, 10),
             'includes_inactive' => $this->faker->boolean,
