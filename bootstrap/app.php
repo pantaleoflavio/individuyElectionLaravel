@@ -11,7 +11,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Per il middleware custom auth
         $middleware->appendToGroup('auth.custom', \App\Http\Middleware\RedirectIfNotAuthenticated::class);
+        // Per il middleware admin
+        $middleware->appendToGroup('admin', \App\Http\Middleware\AdminMiddleware::class);
+
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

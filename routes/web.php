@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VoteController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\TagTeamController;
@@ -28,9 +29,14 @@ Route::delete('/logout', [SessionController::class, 'destroy'])->middleware('aut
 
 // User Routes
 Route::middleware(['auth.custom'])->group(function () {
-    // Route::get('/profile/edit', [UserController::class, 'edit'])->name('user.edit');
-    // Route::put('/profile', [UserController::class, 'update'])->name('user.update');
     Route::get('/profile', [UserController::class, 'show'])->name('user.profile');
+    Route::get('/profile/edit', [UserController::class, 'edit'])->name('user.edit');
+    Route::put('/profile', [UserController::class, 'update'])->name('user.update');
+});
+
+// Admin Routes
+Route::middleware(['auth.custom', 'admin'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 });
 
 // Ranking Routes
