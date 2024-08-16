@@ -44,6 +44,7 @@ class RankingController extends Controller
                 ->select('wrestler_id', DB::raw('AVG(vote) as average_vote'))
                 ->where('ranking_id', $rankingId)
                 ->groupBy('wrestler_id')
+                ->orderBy('average_vote', 'desc')
                 ->get();
     
             // Aggiungi i nomi dei wrestler
@@ -58,6 +59,7 @@ class RankingController extends Controller
                 ->select('tag_team_id', DB::raw('AVG(vote) as average_vote'))
                 ->where('ranking_id', $rankingId)
                 ->groupBy('tag_team_id')
+                ->orderBy('average_vote', 'desc')
                 ->get();
     
             // Aggiungi i nomi dei tag team
