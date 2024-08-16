@@ -35,17 +35,20 @@
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             {{ Auth::check() ? Auth::user()->username : 'Utente' }}
                         </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             @guest
                                 <li><a class="dropdown-item" href="/login">Login</a></li>
                                 <li><a class="dropdown-item" href="/register">Signup</a></li>
                             @endguest
                             @auth
-                                <li><a class="dropdown-item" href="/profile">Profilo</a></li>
-                                <form  method="POST" action="/logout">
+                                <li><a class="dropdown-item" href="{{ route('user.profile') }}">Profilo</a></li>
+                                @if(Auth::user()->role === 'admin')
+                                    <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">Admin Dashboard</a></li>
+                                @endif
+                                <form method="POST" action="/logout">
                                     @csrf
                                     @method('DELETE')
-                                    <li><button class="dropdown-item" >Logout</button></li>
+                                    <li><button class="dropdown-item">Logout</button></li>
                                 </form>
                             @endauth
                         </ul>
