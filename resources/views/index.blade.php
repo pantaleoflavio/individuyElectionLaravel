@@ -24,7 +24,7 @@
     <x-main-card 
         title="Classifiche" 
         text="Qui vengono mostrate le classifiche basate sui voti degli utenti." 
-        href="/" 
+        href="/rankings" 
         linkLabel="Vedi le Classifiche" 
     />
 
