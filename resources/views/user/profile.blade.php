@@ -13,7 +13,7 @@
         @endif
     </div>
     <div class="my-3">
-        <a href="">Modifica Profilo</a>
+        <a href="{{ route('user.edit') }}">Modifica Profilo</a>
     </div>
 
     <hr>
