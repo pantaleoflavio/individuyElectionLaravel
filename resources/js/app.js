@@ -37,5 +37,14 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+        
+    document.querySelectorAll('form[data-confirm]').forEach(function(form) {
+        form.addEventListener('submit', function(event) {
+            if (!confirm('Sei sicuro di voler eliminare questo wrestler? Questa azione non può essere annullata.')) {
+                console.log('Cancellazione annullata');
+                event.preventDefault();
+            }
+        });
+    });
 });
 
