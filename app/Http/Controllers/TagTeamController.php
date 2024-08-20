@@ -43,4 +43,13 @@ class TagTeamController extends Controller
             'ranking' => $ranking,
         ]);
     }
+
+    public function tag_team()
+    {
+        $tagTeams = TagTeam::with(['category', 'federation'])->get();
+        
+        return view('admin.tag_team', compact(
+            'tagTeams',
+        ));
+    }
 }

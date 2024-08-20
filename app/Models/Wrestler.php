@@ -13,6 +13,7 @@ class Wrestler extends Model
         'name',
         'country',
         'category_id',
+        'federation_id',
         'is_active',
     ];
 
