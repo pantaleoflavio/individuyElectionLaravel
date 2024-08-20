@@ -37,6 +37,9 @@ Route::middleware(['auth.custom'])->group(function () {
 // Admin Routes
 Route::middleware(['auth.custom', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/wrestler', [AdminController::class, 'wrestler'])->name('admin.wrestler');
+    Route::get('/admin/wrestlers/{id}/edit', [AdminController::class, 'edit_wrestler'])->name('admin.wrestler.edit');
+    Route::put('/admin/wrestlers/{id}', [AdminController::class, 'update_wrestler'])->name('admin.wrestler.update');
 });
 
 // Ranking Routes
