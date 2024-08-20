@@ -44,5 +44,12 @@ class WrestlerController extends Controller
         ]);
     }
 
-
+    public function wrestler()
+    {
+        $wrestlers = Wrestler::with(['category', 'federation'])->get();
+        
+        return view('admin.wrestler', compact(
+            'wrestlers',
+        ));
+    }
 }

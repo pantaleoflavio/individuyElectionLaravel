@@ -35,15 +35,6 @@ class AdminController extends Controller
         ));
     }
 
-    public function wrestler()
-    {
-        $wrestlers = Wrestler::with(['category', 'federation'])->get();
-        
-        return view('admin.wrestler', compact(
-            'wrestlers',
-        ));
-    }
-
     public function edit_wrestler($wrestlerId)
     {
         $wrestler = Wrestler::findOrFail($wrestlerId);
@@ -60,4 +51,38 @@ class AdminController extends Controller
         
         return redirect()->route('admin.wrestler')->with('success', 'Wrestler aggiornato con successo');
     }
+
+    public function delete_wrestler(Request $request, $id)
+    {
+        
+        $wrestler = Wrestler::findOrFail($id);
+
+        $wrestler->delete();
+
+        return redirect()->route('admin.wrestler')->with('success', 'Wrestler eliminato con successo');
+    }
+
+    public function add_wrestler()
+    {
+        $federations = Federation::all();
+        $categories = Category::all();
+        return view('admin.add-wrestler', compact('federations', 'categories'));
+    }
+
+    public function store_wrestler(Request $request)
+    {
+        $wrestlerAttributes = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'country' => ['required', 'string', 'max:255'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'federation_id' => ['required', 'exists:federations,id'],
+            'is_active' => ['required', 'boolean'],
+        ]);
+    
+        Wrestler::create($wrestlerAttributes);
+    
+        return redirect()->route('admin.wrestler')->with('success', 'Wrestler aggiunto con successo.');
+    }
+
+
 }
