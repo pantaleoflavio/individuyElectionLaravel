@@ -41,11 +41,19 @@ Route::middleware(['auth.custom', 'admin'])->group(function () {
 
     // Wrestler Admin
     Route::get('/admin/wrestler', [WrestlerController::class, 'wrestler'])->name('admin.wrestler');
-    Route::get('/admin/wrestlers/add', [AdminController::class, 'add_wrestler'])->name('admin.wrestler.add');
-    Route::post('/admin/wrestlers', [AdminController::class, 'store_wrestler'])->name('admin.wrestler.store');
-    Route::get('/admin/wrestlers/{id}/edit', [AdminController::class, 'edit_wrestler'])->name('admin.wrestler.edit');
-    Route::put('/admin/wrestlers/{id}', [AdminController::class, 'update_wrestler'])->name('admin.wrestler.update');
-    Route::delete('/admin/wrestlers/{id}/delete', [AdminController::class, 'delete_wrestler'])->name('admin.wrestler.delete');
+    Route::get('/admin/wrestler/add', [AdminController::class, 'add_wrestler'])->name('admin.wrestler.add');
+    Route::post('/admin/wrestler', [AdminController::class, 'store_wrestler'])->name('admin.wrestler.store');
+    Route::get('/admin/wrestler/{id}/edit', [AdminController::class, 'edit_wrestler'])->name('admin.wrestler.edit');
+    Route::put('/admin/wrestler/{id}', [AdminController::class, 'update_wrestler'])->name('admin.wrestler.update');
+    Route::delete('/admin/wrestler/{id}/delete', [AdminController::class, 'delete_wrestler'])->name('admin.wrestler.delete');
+
+    // Tag Teams Admin
+    Route::get('/admin/tag_team', [TagTeamController::class, 'tag_team'])->name('admin.tag_team');
+    Route::get('/admin/tag_team/add', [AdminController::class, 'add_tag_team'])->name('admin.tag_team.add');
+    Route::post('/admin/tag_team', [AdminController::class, 'store_tag_team'])->name('admin.tag_team.store');
+    Route::get('/admin/tag_team/{id}/edit', [AdminController::class, 'edit_tag_team'])->name('admin.tag_team.edit');
+    Route::put('/admin/tag_team/{id}', [AdminController::class, 'update_tag_team'])->name('admin.tag_team.update');
+    Route::delete('/admin/tag_team/{id}/delete', [AdminController::class, 'delete_tag_team'])->name('admin.tag_team.delete');
 });
 
 // Ranking Routes

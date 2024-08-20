@@ -40,7 +40,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="">
+                            <a class="nav-link" href="{{ route('admin.tag_team') }}">
                                 <i class="fa-solid fa-dice-two"></i> Lista Tag Team
                             </a>
                         </li>
