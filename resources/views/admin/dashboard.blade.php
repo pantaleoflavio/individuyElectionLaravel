@@ -3,19 +3,35 @@
         <h1 class="d-flex justify-content-center text-uppercase mt-2">Admin Dashboard - Benvenuto {{ $admin->username }}</h1>
     </div>
 
-    <h4>Federazioni con più atleti</h4>
+    <h4>Federazioni</h4>
     <div>
         <ul>
-                <li>Nome Federazioe - Lottatori: 10</li>
+            @foreach($federationsWithCounts as $federation)
+                <li>
+                    {{ $federation->name }}: 
+                    {{ $federation->wrestler_count }} lottatori, 
+                    {{ $federation->tag_team_count }} tag team
+                </li>
+            @endforeach
         </ul>
     </div>
 
     <!-- Top Ranking -->
-    <h4>Top Classifiche</h4>
+    <h4>Top Classifiche Wreslter</h4>
     <div>
         <ul>
-            <!-- Aggiornato per mostrare il conteggio totale dei voti invece del punteggio medio -->
-            <li>Nome Ranking - Voti Totali: </li>
+            @foreach($wrestlerRankings as $ranking)
+                <li>{{ $ranking->name }}: {{ $ranking->votes_wrestler_count }} voti</li>
+            @endforeach
+        </ul>
+    </div>
+
+    <h4>Top Classifiche Tag Team</h4>
+    <div>
+        <ul>
+            @foreach($tagTeamRankings as $ranking)
+                <li>{{ $ranking->name }}: {{ $ranking->votes_tag_team_count }} voti</li>
+            @endforeach
         </ul>
     </div>
 
@@ -23,7 +39,7 @@
     <h4>Total users</h4>
     <div id="totalUsers">
         <div class="alert alert-info" role="alert">
-            Total number of users signed: 0</strong>
+            Total number of users signed: {{ $totalUsers }}</strong>
         </div>
     </div>
 </x-admin-layout>

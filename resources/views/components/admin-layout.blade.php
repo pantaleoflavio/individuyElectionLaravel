@@ -35,7 +35,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="">
+                            <a class="nav-link" href="{{ route('admin.wrestler') }}">
                                 <i class="fa-solid fa-video"></i> Lista Wrestler
                             </a>
                         </li>
