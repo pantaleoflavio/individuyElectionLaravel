@@ -14,7 +14,9 @@
         </x-slot>
 
         @foreach($tagTeams as $tagTeam)
-            <x-table-row :item="$tagTeam" url="{{ route('vote.tagTeam.form', ['tagTeam' => $tagTeam->id, 'ranking' => $ranking->id]) }}" />
+            <x-table-row :item="$tagTeam" url="{{ route('vote.tagTeam.form', ['tagTeam' => $tagTeam->id, 'ranking' => $ranking->id]) }}"> 
+                Vota
+            </x-table-row>
         @endforeach
     </x-table>
 
