@@ -36,6 +36,8 @@ class AdminController extends Controller
         ));
     }
 
+    // WRESTLER CRUD
+
     public function edit_wrestler($id)
     {
         $wrestler = Wrestler::findOrFail($id);
@@ -85,6 +87,8 @@ class AdminController extends Controller
         return redirect()->route('admin.wrestler')->with('success', 'Wrestler aggiunto con successo.');
     }
 
+    // TAG TEAM CRUD
+    
     public function edit_tag_team($id)
     {
         $tagTeam = TagTeam::findOrFail($id);
