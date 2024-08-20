@@ -36,10 +36,16 @@ Route::middleware(['auth.custom'])->group(function () {
 
 // Admin Routes
 Route::middleware(['auth.custom', 'admin'])->group(function () {
+
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-    Route::get('/admin/wrestler', [AdminController::class, 'wrestler'])->name('admin.wrestler');
+
+    // Wrestler Admin
+    Route::get('/admin/wrestler', [WrestlerController::class, 'wrestler'])->name('admin.wrestler');
+    Route::get('/admin/wrestlers/add', [AdminController::class, 'add_wrestler'])->name('admin.wrestler.add');
+    Route::post('/admin/wrestlers', [AdminController::class, 'store_wrestler'])->name('admin.wrestler.store');
     Route::get('/admin/wrestlers/{id}/edit', [AdminController::class, 'edit_wrestler'])->name('admin.wrestler.edit');
     Route::put('/admin/wrestlers/{id}', [AdminController::class, 'update_wrestler'])->name('admin.wrestler.update');
+    Route::delete('/admin/wrestlers/{id}/delete', [AdminController::class, 'delete_wrestler'])->name('admin.wrestler.delete');
 });
 
 // Ranking Routes

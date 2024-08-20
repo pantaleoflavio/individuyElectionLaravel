@@ -3,6 +3,9 @@
     <div class="row">
         <div class="col-md-12">
             <h2>Lista Wrestler</h2>
+            <div class="d-flex justify-content-end">
+                <a href="{{ route('admin.wrestler.add') }}" class="btn btn-success">Aggiungi nuovo Wrestler</a>
+            </div>
             <x-table id="candidatesTable">
                 <x-slot name="header">
                     <x-table-header />
@@ -15,10 +18,11 @@
                         @else
                             <td>ritirato</td>
                         @endif
-                        
-                        <td>
-                            Elimina
-                        </td>
+                        <form method="POST" action="{{ route('admin.wrestler.delete', $wrestler->id) }}" data-confirm="true">
+                            @csrf
+                            @method('DELETE')
+                            <td><button type="submit" class="btn btn-danger">Elimina</button></td>
+                        </form>
                     </x-table-row>
 
                 @endforeach
