@@ -41,7 +41,7 @@
                 </select>
             </div>
             <div class="text-center">
-                <button type="submit" name="add_wrestler" class="btn btn-primary">Salva</button>
+                <button type="submit" class="btn btn-primary">Salva</button>
             </div>
         </form>
     </div>
