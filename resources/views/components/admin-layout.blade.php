@@ -45,13 +45,13 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="">
+                            <a class="nav-link" href="{{ route('admin.category') }}">
                                 <i class="fa-solid fa-tv"></i> Lista Stili
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="">
-                                <i class="fa-solid fa-sitemap"></i> Lista Federation
+                            <a class="nav-link" href="{{ route('admin.federation') }}">
+                                <i class="fa-solid fa-sitemap"></i> Lista Federationi
                             </a>
                         </li>
                         <li class="nav-item">

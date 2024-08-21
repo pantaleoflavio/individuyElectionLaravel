@@ -2,7 +2,7 @@
 
 <tr>
     <td>{{ $item->name }}</td>
-    <td>{{ $item->category->name }}</td>
+    <td>{{ $item->category->name ?? 'Nessuno Stile' }}</td>
     <td>{{ $item->country ?? 'Nessuna Nazione' }}</td>
     <td>{{ $item->federation->name ?? 'Nessuna Federazione' }}</td>
     <td>

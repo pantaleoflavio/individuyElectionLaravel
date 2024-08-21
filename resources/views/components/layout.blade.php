@@ -23,13 +23,13 @@
                         <a class="nav-link active" aria-current="page" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/vote-lists">Votazioni</a>
+                        <a class="nav-link" href="{{ route('vote.lists.index') }}">Votazioni</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/rankings">Classifiche</a>
+                        <a class="nav-link" href="{{ route('rankings.index') }}">Classifiche</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/federations">Federazioni</a>
+                        <a class="nav-link" href="{{ route('federations.index') }}">Federazioni</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -37,8 +37,8 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             @guest
-                                <li><a class="dropdown-item" href="/login">Login</a></li>
-                                <li><a class="dropdown-item" href="/register">Signup</a></li>
+                                <li><a class="dropdown-item" href="{{ route('login') }}">Login</a></li>
+                                <li><a class="dropdown-item" href="{{ route('register') }}">Signup</a></li>
                             @endguest
                             @auth
                                 <li><a class="dropdown-item" href="{{ route('user.profile') }}">Profilo</a></li>
