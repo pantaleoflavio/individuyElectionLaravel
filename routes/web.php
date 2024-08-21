@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VoteController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\TagTeamController;
@@ -19,10 +20,10 @@ Route::get('/', function () {
 
 // Auth Routes
 Route::middleware('guest')->group(function(){
-    Route::get('/register', [RegisteredUserController::class, 'create']);
+    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register', [RegisteredUserController::class, 'store']);
 
-    Route::get('/login', [SessionController::class, 'create']);
+    Route::get('/login', [SessionController::class, 'create'])->name('login');
     Route::post('/login', [SessionController::class, 'store']);
 });
 Route::delete('/logout', [SessionController::class, 'destroy'])->middleware('auth');
@@ -54,6 +55,20 @@ Route::middleware(['auth.custom', 'admin'])->group(function () {
     Route::get('/admin/tag_team/{id}/edit', [AdminController::class, 'edit_tag_team'])->name('admin.tag_team.edit');
     Route::put('/admin/tag_team/{id}', [AdminController::class, 'update_tag_team'])->name('admin.tag_team.update');
     Route::delete('/admin/tag_team/{id}/delete', [AdminController::class, 'delete_tag_team'])->name('admin.tag_team.delete');
+
+    // Category Admin
+    Route::get('/admin/category', [CategoryController::class, 'index'])->name('admin.category');
+    Route::get('/admin/category/{id}/edit', [AdminController::class, 'edit_category'])->name('admin.category.edit');
+    Route::put('/admin/category/{id}', [AdminController::class, 'update_category'])->name('admin.category.update');
+    Route::post('/admin/category', [AdminController::class, 'store_category'])->name('admin.category.store');
+    Route::delete('/admin/category/{id}/delete', [AdminController::class, 'delete_category'])->name('admin.category.delete');
+
+    // Federation Admin
+    Route::get('/admin/federation', [FederationController::class, 'admin_index'])->name('admin.federation');
+    Route::get('/admin/federation/{id}/edit', [AdminController::class, 'edit_federation'])->name('admin.federation.edit');
+    Route::put('/admin/federation/{id}', [AdminController::class, 'update_federation'])->name('admin.federation.update');
+    Route::post('/admin/federation', [AdminController::class, 'store_federation'])->name('admin.federation.store');
+    Route::delete('/admin/federation/{id}/delete', [AdminController::class, 'delete_federation'])->name('admin.federation.delete');
 });
 
 // Ranking Routes
@@ -64,7 +79,7 @@ Route::get('/ranking-list-wrestler', [RankingController::class, 'ranking_list_wr
 Route::get('/ranking-list-tag-team', [RankingController::class, 'ranking_list_tag_team']);
 
 // Vote Routes
-Route::get('/vote-lists', [VoteController::class, 'index']);
+Route::get('/vote-lists', [VoteController::class, 'index'])->name('vote.lists.index');
 Route::middleware(['auth.custom'])->group(function () {
     Route::get('/voteWrestler/{wrestler}/{ranking}', [VoteController::class, 'showWrestlerVoteForm'])->name('vote.wrestler.form');
     Route::post('/voteWrestler', [VoteController::class, 'wrestlerVoteStore'])->name('vote.wrestler.store');
@@ -80,5 +95,5 @@ Route::get('/tag-team-candidates', [TagTeamController::class, 'candidates']);
 
 
 // Feds Routes
-Route::get('/federations', [FederationController::class, 'index']);
-Route::get('/list-per-fed&{id}', [FederationController::class, 'show'])->name('federations.show');;
+Route::get('/federations', [FederationController::class, 'index'])->name('federations.index');
+Route::get('/list-per-fed&{id}', [FederationController::class, 'show'])->name('federations.show');
