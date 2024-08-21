@@ -55,7 +55,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="">
+                            <a class="nav-link" href="{{ route('admin.ranking') }}">
                             <i class="fa-solid fa-trophy"></i> Lista Ranking
                             </a>
                         </li>

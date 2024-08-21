@@ -12,17 +12,17 @@
             <tbody>
                 @foreach($categories as $category)
                     <tr class="">
-                        <td class="">
+                        <td class="my-2">
                             {{ $category->name}}
                         </td>
-                        <td class="d-flex justify-content-end mx-3">
-                            <a href="{{ route('admin.category.edit', $category->id) }}" class="btn btn-primary mx-5">
+                        <td class="d-flex justify-content-center align-items-center my-2">
+                            <a href="{{ route('admin.category.edit', $category->id) }}" class="btn btn-primary mx-1">
                                 Modifica
                             </a>
                             <form method="post" action="{{ route('admin.category.delete', $category->id) }}" data-confirm="true">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger mx-5">Elimina</button>
+                                <button type="submit" class="btn btn-danger mx-1">Elimina</button>
                             </form>
                         </td>
                     </tr>
