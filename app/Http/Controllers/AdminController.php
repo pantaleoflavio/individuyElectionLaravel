@@ -138,5 +138,90 @@ class AdminController extends Controller
         return redirect()->route('admin.tag_team')->with('success', 'Tag Team aggiunto con successo.');
     }
 
+    // CATEGORY CRUD
+
+    public function store_category(Request $request)
+    {
+        $categoryAttributes = $request->validate([
+            'name' => ['required', 'string', 'max:255', 'unique:categories,name'],
+        ]);
+    
+        Category::create($categoryAttributes);
+    
+        return redirect()->route('admin.category')->with('success', 'Categoria aggiunta con successo.');
+    }    
+
+    public function delete_category(Request $request, $id)
+    {
+        
+        $category = Category::findOrFail($id);
+
+        $category->delete();
+
+        return redirect()->route('admin.category')->with('success', 'Categoria eliminata con successo');
+    }
+
+    public function edit_category($id)
+    {
+        $category = Category::findOrFail($id);
+        
+        return view('admin.edit-category', compact('category'));
+    }
+
+    public function update_category(Request $request, $id)
+    {
+        $category = Category::findOrFail($id);
+
+        $validatedData = $request->validate([
+            'name' => ['required', 'string', 'max:255', 'unique:categories,name,' . $category->id],
+        ]);
+    
+        $category->update($validatedData);
+        
+        return redirect()->route('admin.category.edit', $category->id)->with('success', 'Categoria aggiornata con successo');
+    }
+
+    // FEDERATION CRUD
+
+    public function store_federation(Request $request)
+    {
+        $federationAttributes = $request->validate([
+            'name' => ['required', 'string', 'max:255', 'unique:federations,name'],
+        ]);
+    
+        Federation::create($federationAttributes);
+    
+        return redirect()->route('admin.federation')->with('success', 'Federazione aggiunta con successo.');
+    }    
+
+    public function delete_federation(Request $request, $id)
+    {
+        
+        $federation = Federation::findOrFail($id);
+
+        $federation->delete();
+
+        return redirect()->route('admin.federation')->with('success', 'Federazione eliminata con successo');
+    }
+
+    public function edit_federation($id)
+    {
+        $federation = Federation::findOrFail($id);
+        
+        return view('admin.edit-federation', compact('federation'));
+    }
+
+    public function update_federation(Request $request, $id)
+    {
+        $federation = Federation::findOrFail($id);
+
+        $validatedData = $request->validate([
+            'name' => ['required', 'string', 'max:255', 'unique:federations,name,' . $federation->id],
+        ]);
+    
+        $federation->update($validatedData);
+        
+        return redirect()->route('admin.federation.edit', $federation->id)->with('success', 'Federazione aggiornata con successo');
+    }
 
 }
