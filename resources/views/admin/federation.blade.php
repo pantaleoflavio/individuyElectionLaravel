@@ -1,7 +1,7 @@
 <x-admin-layout>
     <!-- Federation List-->
 
-    <h2>Lista Stili</h2>
+    <h2>Lista Federazioni</h2>
     <div class="row">
         <table id="">
             <thead>
