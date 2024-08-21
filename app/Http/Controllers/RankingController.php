@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Ranking;
 use App\Models\TagTeam;
 use App\Models\Wrestler;
@@ -13,8 +14,14 @@ class RankingController extends Controller
     public function index()
     {
         $rankings = Ranking::all();
-    
         return view('rankings.index', compact('rankings'));
+    }
+
+    public function admin_index()
+    {
+        $rankings = Ranking::all();
+        $categories = Category::all();
+        return view('admin.ranking', compact('rankings', 'categories'));
     }
 
     public function ranking_list_wrestler()

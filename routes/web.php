@@ -69,6 +69,13 @@ Route::middleware(['auth.custom', 'admin'])->group(function () {
     Route::put('/admin/federation/{id}', [AdminController::class, 'update_federation'])->name('admin.federation.update');
     Route::post('/admin/federation', [AdminController::class, 'store_federation'])->name('admin.federation.store');
     Route::delete('/admin/federation/{id}/delete', [AdminController::class, 'delete_federation'])->name('admin.federation.delete');
+
+    // Ranking Admin
+    Route::get('/admin/ranking', [RankingController::class, 'admin_index'])->name('admin.ranking');
+    Route::get('/admin/ranking/{id}/edit', [AdminController::class, 'edit_ranking'])->name('admin.ranking.edit');
+    Route::put('/admin/ranking/{id}', [AdminController::class, 'update_ranking'])->name('admin.ranking.update');
+    Route::post('/admin/ranking', [AdminController::class, 'store_ranking'])->name('admin.ranking.store');
+    Route::delete('/admin/ranking/{id}/delete', [AdminController::class, 'delete_ranking'])->name('admin.ranking.delete');
 });
 
 // Ranking Routes

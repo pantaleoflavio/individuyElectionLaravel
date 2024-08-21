@@ -224,4 +224,52 @@ class AdminController extends Controller
         return redirect()->route('admin.federation.edit', $federation->id)->with('success', 'Federazione aggiornata con successo');
     }
 
+    // RANKING CRUD
+
+    public function store_ranking(Request $request)
+    {
+        $rankingAttributes = $request->validate([
+            'name' => ['required', 'string', 'max:255', 'unique:rankings,name'],
+            'description' => ['required', 'string'],
+            'type' => ['required', 'string','in:wrestler,tag team'],
+            'status' => ['required', 'boolean'],
+            'category_id' =>  ['nullable', 'exists:categories,id'],
+            'includes_inactive' => ['nullable', 'boolean'],
+        ]);
+    
+        Ranking::create($rankingAttributes);
+    
+        return redirect()->route('admin.ranking')->with('success', 'Ranking aggiunto con successo.');
+    }    
+
+    public function delete_ranking(Request $request, $id)
+    {
+        
+        $ranking = Ranking::findOrFail($id);
+
+        $ranking->delete();
+
+        return redirect()->route('admin.ranking')->with('success', 'Ranking eliminato con successo');
+    }
+
+    public function edit_ranking($id)
+    {
+        $ranking = Ranking::findOrFail($id);
+        $categories = Category::all();
+        return view('admin.edit-ranking', compact('ranking', 'categories'));
+    }
+
+    public function update_ranking(Request $request, $id)
+    {
+        $ranking = Ranking::findOrFail($id);
+
+        $validatedData = $request->validate([
+            'name' => ['required', 'string', 'max:255', 'unique:rankings,name,' . $ranking->id],
+        ]);
+    
+        $ranking->update($validatedData);
+        
+        return redirect()->route('admin.ranking.edit', $ranking->id)->with('success', 'Ranking aggiornato con successo');
+    }
+
 }
