@@ -14,6 +14,12 @@ class FederationController extends Controller
         $federations = Federation::all();
         return view('federations.index', compact('federations'));
     }
+    
+    public function admin_index()
+    {
+        $federations = Federation::all();
+        return view('admin.federation', compact('federations'));
+    }
 
     public function show($id)
     {
