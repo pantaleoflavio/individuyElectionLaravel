@@ -1,5 +1,11 @@
 <x-layout>
     <x-second-title>Il tuo profilo</x-second-title>
+
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
     
     <div class="container">
         <h4>{{ $user->name }}</h4>
