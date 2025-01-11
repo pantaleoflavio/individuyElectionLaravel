@@ -40,6 +40,12 @@ Route::middleware(['auth.custom', 'admin'])->group(function () {
 
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
+    // User Admin
+    Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+    Route::delete('/admin/users/{id}', [AdminController::class, 'destroy'])->name('admin.users.delete');
+    Route::patch('/admin/users/{id}/promote', [AdminController::class, 'promote'])->name('admin.users.promote');
+    Route::patch('/admin/users/{id}/demote', [AdminController::class, 'demote'])->name('admin.users.demote');
+
     // Wrestler Admin
     Route::get('/admin/wrestler', [WrestlerController::class, 'wrestler'])->name('admin.wrestler');
     Route::get('/admin/wrestler/add', [AdminController::class, 'add_wrestler'])->name('admin.wrestler.add');

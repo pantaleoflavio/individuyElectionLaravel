@@ -16,10 +16,12 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->role === 'admin') {
+        // Consenti l'accesso solo agli utenti con ruolo 'admin' o 'super_admin'
+        if (Auth::check() && in_array(Auth::user()->role, ['admin', 'super_admin'])) {
             return $next($request);
         }
         
-        return $next($request);
+        // Reindirizza o mostra un messaggio se l'utente non è autorizzato
+        return redirect()->route('home')->with('error', 'Accesso non autorizzato.');
     }
 }
