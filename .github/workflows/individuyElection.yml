@@ -15,9 +15,9 @@ jobs:
         image: mariadb:10.6
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: laravel
-          MYSQL_USER: root
-          MYSQL_PASSWORD: password
+          MYSQL_DATABASE: laravel_test
+          MYSQL_USER: laravel
+          MYSQL_PASSWORD: secret
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
