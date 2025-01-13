@@ -20,8 +20,8 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: individuyitalianilaravel
-          MYSQL_USER: laravel
-          MYSQL_PASSWORD: secret
+          MYSQL_USER: root
+          MYSQL_PASSWORD: password
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
@@ -71,8 +71,8 @@ jobs:
         DB_HOST: 127.0.0.1
         DB_PORT: 3306
         DB_DATABASE: individuyitalianilaravel
-        DB_USERNAME: laravel
-        DB_PASSWORD: secret
+        DB_USERNAME: root
+        DB_PASSWORD: password
       run: php artisan migrate --force
 
     # Run Pest tests
@@ -82,8 +82,8 @@ jobs:
         DB_HOST: 127.0.0.1
         DB_PORT: 3306
         DB_DATABASE: individuyitalianilaravel
-        DB_USERNAME: laravel
-        DB_PASSWORD: secret
+        DB_USERNAME: root
+        DB_PASSWORD: password
       run: vendor/bin/pest
     
 
