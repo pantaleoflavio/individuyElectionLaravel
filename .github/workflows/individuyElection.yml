@@ -59,8 +59,8 @@ jobs:
         DB_PASSWORD: password
       run: php artisan migrate --force
 
-    # Run Pest tests
-    - name: Run Pest Tests
+    # Run PHPUnit tests
+    - name: Run PHPUnit Tests
       env:
         DB_CONNECTION: mariadb
         DB_HOST: localhost
