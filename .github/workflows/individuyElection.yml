@@ -20,8 +20,6 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: individuyitalianilaravel
-          MYSQL_USER: root
-          MYSQL_PASSWORD: password
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
