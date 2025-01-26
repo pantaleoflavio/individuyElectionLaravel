@@ -42,7 +42,7 @@
                             @endguest
                             @auth
                                 <li><a class="dropdown-item" href="{{ route('user.profile') }}">Profilo</a></li>
-                                @if(Auth::user()->role === 'admin')
+                                @if(in_array(Auth::user()->role, ['admin', 'super_admin']))
                                     <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">Admin Dashboard</a></li>
                                 @endif
                                 <form method="POST" action="/logout">

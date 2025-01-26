@@ -21,12 +21,12 @@ class DatabaseSeeder extends Seeder
             'username' => 'johndoe',
             'email' => 'john@doe.com',
             'password' => Hash::make('password'),
-            'role' => 'admin',
+            'role' => 'super_admin',
             'image_path' => 'profile_images/john_doe_image.jpg',
         ]);
 
         // Creazione factory
-        User::factory()->count(2)->create();
+        User::factory()->count(5)->create();
         Federation::factory()->count(5)->create();
         Category::factory()->count(10)->create();
 
