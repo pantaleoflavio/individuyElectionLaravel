@@ -46,33 +46,37 @@ class VoteController extends Controller
 
     public function wrestlerVoteStore(Request $request)
     {
-        // Validazione dell'input
         $validated = $request->validate([
             'wrestler_id' => 'required|exists:wrestlers,id',
             'ranking_id' => 'required|exists:rankings,id',
             'vote' => 'required|numeric|min:0|max:10',
         ]);
-    
+
+        // Controlliamo che il wrestler appartenga al ranking
+        $ranking = Ranking::find($validated['ranking_id']);
+
+        if (!$ranking || $ranking->type !== 'wrestler') {
+            return redirect()->back()->with('error', 'Questo ranking non accetta votazioni per wrestler.');
+        }
+
         // Verifica se l'utente ha già votato per questo wrestler in questo ranking
         $existingVote = VoteWrestler::where('user_id', Auth::id())
             ->where('wrestler_id', $validated['wrestler_id'])
             ->where('ranking_id', $validated['ranking_id'])
             ->first();
-    
+
         if ($existingVote) {
-            // Se esiste già un voto, restituisci un messaggio di errore
             return redirect()->back()->with('error', 'Hai già votato per questo wrestler in questo ranking.');
         }
-    
-        // Se non esiste un voto, crealo
+
+        // Registra il voto
         VoteWrestler::create([
             'user_id' => Auth::id(),
             'wrestler_id' => $validated['wrestler_id'],
             'ranking_id' => $validated['ranking_id'],
             'vote' => $validated['vote'],
         ]);
-    
-        // Redirigi con messaggio di successo
+
         return redirect()->route('user.profile')->with('success', 'Il tuo voto è stato registrato con successo.');
     }
 
@@ -83,24 +87,33 @@ class VoteController extends Controller
             'ranking_id' => 'required|exists:rankings,id',
             'vote' => 'required|numeric|min:0|max:10',
         ]);
-
-       // Verifica se l'utente ha già votato per questo tag team in questo ranking
+    
+        // Controlliamo che il tag team appartenga al ranking
+        $ranking = Ranking::find($validated['ranking_id']);
+    
+        if (!$ranking || $ranking->type !== 'tag team') {
+            return redirect()->back()->with('error', 'Questo ranking non accetta votazioni per tag team.');
+        }
+    
+        // Verifica se l'utente ha già votato per questo tag team in questo ranking
         $existingVote = VoteTagTeam::where('user_id', Auth::id())
             ->where('tag_team_id', $validated['tag_team_id'])
             ->where('ranking_id', $validated['ranking_id'])
             ->first();
     
         if ($existingVote) {
-            // Se esiste già un voto, restituisci un messaggio di errore
             return redirect()->back()->with('error', 'Hai già votato per questo tag team in questo ranking.');
         }
+    
+        // Registra il voto
         VoteTagTeam::create([
             'user_id' => Auth::id(),
             'tag_team_id' => $validated['tag_team_id'],
             'ranking_id' => $validated['ranking_id'],
             'vote' => $validated['vote'],
         ]);
-
+    
         return redirect()->route('user.profile')->with('success', 'Il tuo voto è stato registrato con successo.');
     }
+    
 }

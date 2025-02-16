@@ -26,18 +26,30 @@ class RankingController extends Controller
 
     public function ranking_list_wrestler()
     {
-        $rankings = Ranking::where('type', 'wrestler')->get(['id', 'name', 'description', 'category_id', 'includes_inactive']);
-
+        $rankings = Ranking::where('type', 'wrestler')
+            ->where('status', true) // Mostriamo solo quelli attivi
+            ->get(['id', 'name', 'description', 'category_id', 'includes_inactive']);
+    
+        if ($rankings->isEmpty()) {
+            return redirect()->route('home')->with('error', 'Le votazioni per i wrestler sono sospese.');
+        }
+    
         return view('votes.wrestler.ranking-list', ['rankings' => $rankings]);
     }
 
     public function ranking_list_tag_team()
     {
-        $rankings = Ranking::where('type', 'tag team')->get(['id', 'name', 'description', 'category_id', 'includes_inactive']);
-
+        $rankings = Ranking::where('type', 'tag team')
+            ->where('status', true) // Mostriamo solo quelli attivi
+            ->get(['id', 'name', 'description', 'category_id', 'includes_inactive']);
+    
+        if ($rankings->isEmpty()) {
+            return redirect()->route('home')->with('error', 'Le votazioni per i tag team sono sospese.');
+        }
+    
         return view('votes.tag_team.ranking-list', ['rankings' => $rankings]);
     }
-
+    
     public function show($rankingId)
     {
         // Recupera il ranking
