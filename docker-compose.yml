@@ -1,0 +1,64 @@
+services:
+  individuyelection:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: individuyelection
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    networks:
+      - individuy_network
+    depends_on:
+      - individuydb
+
+  nginx:
+    image: nginx:latest
+    container_name: individuy_nginx
+    restart: unless-stopped
+    ports:
+      - "8088:80"
+    volumes:
+      - .:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - individuy_network
+    depends_on:
+      - individuyelection
+
+  individuydb:
+    image: mariadb:latest
+    container_name: individuydb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: individuyitalianilaravel
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+    ports:
+      - "3307:3306"
+    networks:
+      - individuy_network
+    volumes:
+      - db_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: individuyphpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: individuydb
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - "8080:80"
+    networks:
+      - individuy_network
+    depends_on:
+      - individuydb
+
+networks:
+  individuy_network:
+
+volumes:
+  db_data:
