@@ -42,13 +42,11 @@ class UpdateTagTeamAverage implements ShouldQueue
             ->first();
 
         if ($record) {
-            // Calcolo incrementale
             $record->votes_count  += 1;
             $record->votes_sum    += $this->newVoteValue;
             $record->average_vote = round($record->votes_sum / $record->votes_count, 2);
             $record->save();
         } else {
-            // Se non esiste, inseriamo per la prima volta
             RankingTagTeamAverage::create([
                 'ranking_id'   => $this->rankingId,
                 'tag_team_id'  => $this->tagTeamId,
