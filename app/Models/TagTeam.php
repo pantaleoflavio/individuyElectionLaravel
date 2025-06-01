@@ -26,4 +26,9 @@ class TagTeam extends Model
     {
         return $this->belongsTo(Federation::class);
     }
+
+    public function rankingAverages()
+    {
+        return $this->hasMany(RankingTagTeamAverage::class);
+    }
 }
