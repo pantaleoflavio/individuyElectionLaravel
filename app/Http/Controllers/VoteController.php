@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Ranking;
 use App\Models\TagTeam;
+use App\Models\Wrestler;
+use App\Events\VoteAdded;
 use App\Models\VoteTagTeam;
 use App\Models\VoteWrestler;
-use App\Models\Wrestler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -70,12 +71,14 @@ class VoteController extends Controller
         }
 
         // Registra il voto
-        VoteWrestler::create([
+        $vote = VoteWrestler::create([
             'user_id' => Auth::id(),
             'wrestler_id' => $validated['wrestler_id'],
             'ranking_id' => $validated['ranking_id'],
             'vote' => $validated['vote'],
         ]);
+
+        event(new VoteAdded($vote));
 
         return redirect()->route('user.profile')->with('success', 'Il tuo voto è stato registrato con successo.');
     }
@@ -106,14 +109,15 @@ class VoteController extends Controller
         }
     
         // Registra il voto
-        VoteTagTeam::create([
+        $vote = VoteTagTeam::create([
             'user_id' => Auth::id(),
             'tag_team_id' => $validated['tag_team_id'],
             'ranking_id' => $validated['ranking_id'],
             'vote' => $validated['vote'],
         ]);
+
+        event(new VoteAdded($vote));
     
         return redirect()->route('user.profile')->with('success', 'Il tuo voto è stato registrato con successo.');
     }
-    
 }
