@@ -263,15 +263,20 @@ class AdminController extends Controller
     public function update_ranking(Request $request, $id)
     {
         $ranking = Ranking::findOrFail($id);
-
+    
         $validatedData = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:rankings,name,' . $ranking->id],
+            'description' => ['nullable', 'string'],
         ]);
     
-        $ranking->update($validatedData);
-        
-        return redirect()->route('admin.ranking.edit', $ranking->id)->with('success', 'Ranking aggiornato con successo');
-    }
+        // Aggiorniamo solo name e description
+        $ranking->update([
+            'name' => $validatedData['name'],
+            'description' => $validatedData['description'],
+        ]);
+    
+        return redirect()->route('admin.ranking')->with('success', 'Ranking aggiornato con successo.');
+    }    
 
     // USER CRUD
 

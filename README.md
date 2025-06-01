@@ -7,3 +7,4 @@ DOCKER:
     4. `composer install`
     5. `php artisan migrate --seed`
 2. Open `http://localhost:8088/`
+3. for subsequent uses: `docker-compose down -v; if ($?) { docker-compose build --no-cache; if ($?) { docker-compose up -d} }`

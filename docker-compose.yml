@@ -12,6 +12,8 @@ services:
       - individuy_network
     depends_on:
       - individuydb
+    command: >
+      bash -c "php artisan migrate --force && php-fpm"
 
   nginx:
     image: nginx:latest

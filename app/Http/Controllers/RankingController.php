@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Models\Ranking;
 use App\Models\TagTeam;
+use App\Models\Category;
 use App\Models\Wrestler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\RankingTagTeamAverage;
+use App\Models\RankingWrestlerAverage;
 
 class RankingController extends Controller
 {
@@ -26,60 +28,63 @@ class RankingController extends Controller
 
     public function ranking_list_wrestler()
     {
-        $rankings = Ranking::where('type', 'wrestler')->get(['id', 'name', 'description', 'category_id', 'includes_inactive']);
-
+        $rankings = Ranking::where('type', 'wrestler')
+            ->where('status', true) // Mostriamo solo quelli attivi
+            ->get(['id', 'name', 'description', 'category_id', 'includes_inactive']);
+    
+        if ($rankings->isEmpty()) {
+            return redirect()->route('home')->with('error', 'Le votazioni per i wrestler sono sospese.');
+        }
+    
         return view('votes.wrestler.ranking-list', ['rankings' => $rankings]);
     }
 
     public function ranking_list_tag_team()
     {
-        $rankings = Ranking::where('type', 'tag team')->get(['id', 'name', 'description', 'category_id', 'includes_inactive']);
-
-        return view('votes.tag_team.ranking-list', ['rankings' => $rankings]);
-    }
-
-    public function show($rankingId)
-    {
-        // Recupera il ranking
-        $ranking = Ranking::findOrFail($rankingId);
+        $rankings = Ranking::where('type', 'tag team')
+            ->where('status', true) // Mostriamo solo quelli attivi
+            ->get(['id', 'name', 'description', 'category_id', 'includes_inactive']);
     
-        $participants = collect(); // Inizializza una collection vuota
-    
-        if ($ranking->type == 'wrestler') {
-            // Fetch dei voti e calcolo della media per i wrestler
-            $results = DB::table('votes_wrestler')
-                ->select('wrestler_id', DB::raw('AVG(vote) as average_vote'))
-                ->where('ranking_id', $rankingId)
-                ->groupBy('wrestler_id')
-                ->orderBy('average_vote', 'desc')
-                ->get();
-    
-            // Aggiungi i nomi dei wrestler
-            $participants = $results->map(function ($result) {
-                $result->participant = Wrestler::find($result->wrestler_id);
-                return $result;
-            });
-    
-        } elseif ($ranking->type == 'tag team') {
-            // Fetch dei voti e calcolo della media per i tag team
-            $results = DB::table('votes_tag_team')
-                ->select('tag_team_id', DB::raw('AVG(vote) as average_vote'))
-                ->where('ranking_id', $rankingId)
-                ->groupBy('tag_team_id')
-                ->orderBy('average_vote', 'desc')
-                ->get();
-    
-            // Aggiungi i nomi dei tag team
-            $participants = $results->map(function ($result) {
-                $result->participant = TagTeam::find($result->tag_team_id);
-                return $result;
-            });
+        if ($rankings->isEmpty()) {
+            return redirect()->route('home')->with('error', 'Le votazioni per i tag team sono sospese.');
         }
     
-        return view('rankings.show', compact('ranking', 'participants'));
+        return view('votes.tag_team.ranking-list', ['rankings' => $rankings]);
     }
     
+    public function show($rankingId)
+    {
+        $ranking = Ranking::findOrFail($rankingId);
+    
+        $participants = collect();
 
+        if ($ranking->type === 'wrestler') {
+            $participants = RankingWrestlerAverage::with('wrestler')
+                ->where('ranking_id', $rankingId)
+                ->orderByDesc('average_vote')
+                ->get()
+                ->map(function ($rwa) {
+                    return (object) [
+                        'participant'   => $rwa->wrestler,
+                        'average_vote'  => $rwa->average_vote,
+                        'votes_count'   => $rwa->votes_count,
+                    ];
+                });
 
+        } elseif ($ranking->type === 'tag team') {
+            $participants = RankingTagTeamAverage::with('tagTeam')
+                ->where('ranking_id', $rankingId)
+                ->orderByDesc('average_vote')
+                ->get()
+                ->map(function ($rta) {
+                    return (object) [
+                        'participant'   => $rta->tagTeam,
+                        'average_vote'  => $rta->average_vote,
+                        'votes_count'   => $rta->votes_count,
+                    ];
+                });
+        }
 
+        return view('rankings.show', compact('ranking', 'participants'));
+    }
 }
