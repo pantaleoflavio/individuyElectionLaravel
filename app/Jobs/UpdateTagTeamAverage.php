@@ -36,7 +36,6 @@ class UpdateTagTeamAverage implements ShouldQueue
      */
     public function handle()
     {
-        // Proviamo a recuperare la riga esistente in ranking_tag_team_averages
         $record = RankingTagTeamAverage::where('ranking_id', $this->rankingId)
             ->where('tag_team_id', $this->tagTeamId)
             ->first();
