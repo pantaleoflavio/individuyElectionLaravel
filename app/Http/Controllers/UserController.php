@@ -14,6 +14,7 @@ class UserController extends Controller
      */
     public function show()
     {
+        /** @var User $user */
         $user = Auth::user();
 
         // Recupera solo i voti relativi ai wrestler, includendo il modello wrestler e il ranking
