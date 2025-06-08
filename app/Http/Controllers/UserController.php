@@ -40,6 +40,7 @@ class UserController extends Controller
      */
     public function update(Request $request)
     {
+        /** @var User $user */
         $user = Auth::user();
 
         $request->validate([
