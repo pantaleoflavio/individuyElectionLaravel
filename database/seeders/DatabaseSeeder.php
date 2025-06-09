@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // Creazione utente manuale
-        User::create([
+        User::firstOrCreate([
             'name' => 'John Doe',
             'username' => 'johndoe',
             'email' => 'john@doe.com',

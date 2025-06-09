@@ -30,6 +30,8 @@ RUN mkdir -p storage/framework/{sessions,cache,views} && \
     chown -R www-data:www-data storage bootstrap/cache && \
     chmod -R 775 storage bootstrap/cache
 
+RUN git config --global --add safe.directory /var/www/html
+
 # Installa le dipendenze di Composer
 RUN composer install --optimize-autoloader
 
