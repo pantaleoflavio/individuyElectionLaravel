@@ -7,17 +7,18 @@ use App\Models\VoteWrestler;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use App\Models\AbstractVote;
 
 class VoteAdded
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-    * @var \App\Models\VoteWrestler|\App\Models\VoteTagTeam
+    * @var \App\Models\AbstractVote
     */
-    public VoteWrestler|VoteTagTeam $vote;
+    public AbstractVote $vote;
 
-    public function __construct(VoteWrestler|VoteTagTeam $vote)
+    public function __construct(AbstractVote $vote)
     {
         $this->vote = $vote;
     }
