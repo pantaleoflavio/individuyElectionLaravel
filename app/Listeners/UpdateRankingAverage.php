@@ -3,22 +3,27 @@
 namespace App\Listeners;
 
 use App\Events\VoteAdded;
+use App\Models\VoteTagTeam;
+use App\Models\AbstractVote;
+
+use App\Models\VoteWrestler;
 use App\Jobs\UpdateTagTeamAverage;
 use App\Jobs\UpdateWrestlerAverage;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Events\Dispatchable;
 
 class UpdateRankingAverage
 {
-    /**
-     * Create the event listener.
-     */
-    public function __construct()
+     use Dispatchable, SerializesModels;
+
+    public AbstractVote $vote;
+
+    public function __construct(AbstractVote $vote)
     {
-        //
+        $this->vote = $vote;
     }
 
-/**
+    /**
      * Handle the event.
      *
      * @param  \App\Events\VoteAdded  $event
@@ -26,20 +31,19 @@ class UpdateRankingAverage
      */
     public function handle(VoteAdded $event): void
     {
-        // Se il voto è di tipo VoteWrestler, dispatchiamo il job specifico
-        if ($event->vote instanceof \App\Models\VoteWrestler) {
+        $vote = $event->vote; // AbstractVote
+
+        if ($vote instanceof VoteWrestler) {
             UpdateWrestlerAverage::dispatch(
-                $event->vote->ranking_id,
-                $event->vote->wrestler_id,
-                $event->vote->vote
+                $vote->ranking_id,
+                $vote->wrestler_id,
+                $vote->vote
             );
-        }
-        // Altrimenti, è un voto su un tag team
-        else {
+        } elseif ($vote instanceof VoteTagTeam) {
             UpdateTagTeamAverage::dispatch(
-                $event->vote->ranking_id,
-                $event->vote->tag_team_id,
-                $event->vote->vote
+                $vote->ranking_id,
+                $vote->tag_team_id,
+                $vote->vote
             );
         }
     }
