@@ -74,8 +74,18 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(Request $request)
     {
-        //
+        /** @var User $user */
+        $user = Auth::user();
+
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        $user->delete();
+
+        return redirect('/')->with('success', 'Profilo eliminato con successo.');
     }
 }
