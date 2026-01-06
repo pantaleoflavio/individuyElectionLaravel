@@ -1,7 +1,10 @@
 <?php
 
 use App\Models\User;
+use App\Models\Ranking;
+use App\Models\TagTeam;
 use App\Models\Category;
+use App\Models\Wrestler;
 use App\Models\Federation;
 use App\Models\VoteTagTeam;
 use App\Models\VoteWrestler;
@@ -16,7 +19,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // Creazione utente manuale
-        User::create([
+        User::firstOrCreate([
             'name' => 'John Doe',
             'username' => 'johndoe',
             'email' => 'john@doe.com',
@@ -37,14 +40,69 @@ class DatabaseSeeder extends Seeder
             TagTeamSeeder::class,
         ]);
 
-        // Popolamento di VoteWrestler evitando duplicati
-        foreach (VoteWrestler::factory()->count(25)->make() as $voteWrestler) {
-            VoteWrestler::insertOrIgnore($voteWrestler->toArray());
+        $users = User::pluck('id');
+
+        // VOTI WRESTLER
+        $wrestlerRankings = Ranking::where('type', 'wrestler')->get();
+
+        foreach ($wrestlerRankings as $ranking) {
+            $candidateIds = Wrestler::query()
+                ->where('category_id', $ranking->category_id)
+                ->where('is_active', true)
+                ->pluck('id');
+
+            if ($candidateIds->isEmpty()) {
+                continue;
+            }
+
+            foreach ($users as $userId) {
+                // Ogni utente vota 3 candidati per ranking (o meno se non bastano)
+                $toVote = $candidateIds->random(min(3, $candidateIds->count()));
+
+                foreach ($toVote as $wrestlerId) {
+                    VoteWrestler::updateOrCreate(
+                        [
+                            'user_id' => $userId,
+                            'ranking_id' => $ranking->id,
+                            'wrestler_id' => $wrestlerId,
+                        ],
+                        [
+                            'vote' => fake()->randomFloat(1, 0, 10),
+                        ]
+                    );
+                }
+            }
         }
 
-        // Popolamento di VoteTagTeam evitando duplicati
-        foreach (VoteTagTeam::factory()->count(20)->make() as $voteTagTeam) {
-            VoteTagTeam::insertOrIgnore($voteTagTeam->toArray());
+        // VOTI TAG TEAM
+        $tagTeamRankings = Ranking::where('type', 'tag team')->get();
+
+        foreach ($tagTeamRankings as $ranking) {
+            $candidateIds = TagTeam::query()
+                ->where('category_id', $ranking->category_id)
+                ->where('is_active', true)
+                ->pluck('id');
+
+            if ($candidateIds->isEmpty()) {
+                continue;
+            }
+
+            foreach ($users as $userId) {
+                $toVote = $candidateIds->random(min(3, $candidateIds->count()));
+
+                foreach ($toVote as $tagTeamId) {
+                    VoteTagTeam::updateOrCreate(
+                        [
+                            'user_id' => $userId,
+                            'ranking_id' => $ranking->id,
+                            'tag_team_id' => $tagTeamId,
+                        ],
+                        [
+                            'vote' => fake()->randomFloat(1, 0, 10),
+                        ]
+                    );
+                }
+            }
         }
     }
 }

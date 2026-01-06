@@ -33,6 +33,7 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('/profile', [UserController::class, 'show'])->name('user.profile');
     Route::get('/profile/edit', [UserController::class, 'edit'])->name('user.edit');
     Route::put('/profile', [UserController::class, 'update'])->name('user.update');
+    Route::delete('/profile', [UserController::class, 'destroy'])->name('user.destroy');
 });
 
 // Admin Routes

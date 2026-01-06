@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\VoteWrestler;
 use App\Models\RankingWrestlerAverage;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -15,20 +16,17 @@ class UpdateWrestlerAverage implements ShouldQueue
 
     public int $rankingId;
     public int $wrestlerId;
-    public float $newVoteValue;
 
     /**
      * Create a new job instance.
      *
-     * @param  int    $rankingId
-     * @param  int    $wrestlerId
-     * @param  float  $newVoteValue
+     * @param int $rankingId
+     * @param int $wrestlerId
      */
-    public function __construct(int $rankingId, int $wrestlerId, float $newVoteValue)
+    public function __construct(int $rankingId, int $wrestlerId)
     {
-        $this->rankingId    = $rankingId;
-        $this->wrestlerId   = $wrestlerId;
-        $this->newVoteValue = $newVoteValue;
+        $this->rankingId = $rankingId;
+        $this->wrestlerId = $wrestlerId;
     }
 
     /**
@@ -36,23 +34,28 @@ class UpdateWrestlerAverage implements ShouldQueue
      */
     public function handle()
     {
-        $record = RankingWrestlerAverage::where('ranking_id', $this->rankingId)
-            ->where('wrestler_id', $this->wrestlerId)
-            ->first();
+        $query = VoteWrestler::where('ranking_id', $this->rankingId)
+            ->where('wrestler_id', $this->wrestlerId);
 
-        if ($record) {
-            $record->votes_count  += 1;
-            $record->votes_sum    += $this->newVoteValue;
-            $record->average_vote = round($record->votes_sum / $record->votes_count, 2);
-            $record->save();
-        } else {
-            RankingWrestlerAverage::create([
-                'ranking_id'   => $this->rankingId,
-                'wrestler_id'  => $this->wrestlerId,
-                'votes_count'  => 1,
-                'votes_sum'    => $this->newVoteValue,
-                'average_vote' => round($this->newVoteValue, 2),
-            ]);
+        $votesCount = $query->count();
+
+        //nessun voto
+        if ($votesCount === 0) {
+            return;
         }
+
+        $votesSum = $query->sum('vote');
+
+        RankingWrestlerAverage::updateOrCreate(
+            [
+                'ranking_id'  => $this->rankingId,
+                'wrestler_id' => $this->wrestlerId,
+            ],
+            [
+                'votes_count'  => $votesCount,
+                'votes_sum'    => $votesSum,
+                'average_vote' => round($votesSum / $votesCount, 2),
+            ]
+        );
     }
 }

@@ -41,6 +41,6 @@
             <label for="password_confirmation">Confirm Password</label>
             <input type="password" class="form-control" name="password_confirmation" id="password_confirmation" required>
         </div>
-        <button type="submit" name="signup" class="btn btn-primary">Registrati</button>
+        <button type="submit" name="signup" class="btn btn-primary my-2">Registrati</button>
     </form>
 </x-layout>

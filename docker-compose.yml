@@ -8,12 +8,47 @@ services:
     working_dir: /var/www/html
     volumes:
       - .:/var/www/html
+      - vendor_data:/var/www/html/vendor
+      - storage_data:/var/www/html/storage
+      - cache_data:/var/www/html/bootstrap/cache
     networks:
       - individuy_network
     depends_on:
       - individuydb
     command: >
-      bash -c "php artisan migrate --force && php-fpm"
+      bash -lc "
+        git config --global --add safe.directory /var/www/html &&
+        composer install --optimize-autoloader &&
+        php artisan migrate --force &&
+
+        if [ ! -f storage/.seeded ]; then
+          php artisan db:seed && touch storage/.seeded;
+        fi &&
+
+        php artisan app:calculate-all-ranking-averages &&
+        exec php-fpm
+      "
+
+  queue_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: queue_worker
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+      - vendor_data:/var/www/html/vendor
+      - storage_data:/var/www/html/storage
+      - cache_data:/var/www/html/bootstrap/cache
+    networks:
+      - individuy_network
+    depends_on:
+      - individuydb
+    command: >
+      bash -lc "
+        php artisan queue:work --sleep=3 --tries=3 --verbose
+      "
 
   nginx:
     image: nginx:latest
@@ -40,10 +75,10 @@ services:
       MYSQL_PASSWORD: password
     ports:
       - "3307:3306"
-    networks:
-      - individuy_network
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - individuy_network
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -64,3 +99,6 @@ networks:
 
 volumes:
   db_data:
+  vendor_data:
+  storage_data:
+  cache_data:

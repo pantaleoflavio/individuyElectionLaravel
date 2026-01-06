@@ -46,7 +46,7 @@ class RankingController extends Controller
             ->get(['id', 'name', 'description', 'category_id', 'includes_inactive']);
     
         if ($rankings->isEmpty()) {
-            return redirect()->route('home')->with('error', 'Le votazioni per i tag team sono sospese.');
+            return redirect('/')->with('error', 'Le votazioni per i tag team sono sospese.');
         }
     
         return view('votes.tag_team.ranking-list', ['rankings' => $rankings]);
