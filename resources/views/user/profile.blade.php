@@ -21,6 +21,17 @@
     <div class="my-3">
         <a href="{{ route('user.edit') }}">Modifica Profilo</a>
     </div>
+    <div class="mb-3">
+        <form method="POST" action="{{ route('user.destroy') }}"
+            onsubmit="return confirm('Sei sicuro di voler eliminare il tuo profilo?');">
+            @csrf
+            @method('DELETE')
+
+            <button type="submit" class="btn btn-danger">
+                Elimina profilo
+            </button>
+        </form>
+    </div>
 
     <hr>
 

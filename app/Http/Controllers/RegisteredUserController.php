@@ -33,22 +33,25 @@ class RegisteredUserController extends Controller
     {
         $userAttributes = $request->validate([
             'name' => ['required'],
-            'username' => ['required', 'unique:users,username'], // Validazione per username
-            'email' => ['required', 'email', 'unique:users,email'],
+            'username' => ['required', 'unique:users,username'], // Username univoco
+            'email' => ['required', 'email', 'unique:users,email'], // Email univoca
             'password' => ['required', 'confirmed', Password::min(6)],
             'image' => ['nullable', 'image', 'max:2048'],
+        ], [
+            'username.unique' => 'Il nome utente è già stato preso. Scegline un altro.',
+            'email.unique' => 'L\'email è già registrata. Prova ad accedere.',
         ]);
-
+    
         if ($request->hasFile('image')) {
             $userAttributes['image_path'] = $request->file('image')->store('profile_images', 'public');
         }
-
+    
         $user = User::create($userAttributes);
-
+    
         Auth::login($user);
-
+    
         return redirect('/');
-    }
+    }    
 
     /**
      * Display the specified resource.

@@ -26,4 +26,9 @@ class Wrestler extends Model
     {
         return $this->belongsTo(Federation::class);
     }
+
+    public function rankingAverages()
+    {
+        return $this->hasMany(RankingWrestlerAverage::class);
+    }
 }

@@ -26,7 +26,7 @@ class Ranking extends Model
         return $this->belongsTo(Category::class);
     }
 
-        /**
+    /**
      * Get the votes for the wrestlers in this ranking.
      */
     public function votesWrestler()
@@ -40,5 +40,15 @@ class Ranking extends Model
     public function votesTagTeam()
     {
         return $this->hasMany(VoteTagTeam::class);
+    }
+
+    public function wrestlerAverages()
+    {
+        return $this->hasMany(RankingWrestlerAverage::class);
+    }
+
+    public function tagTeamAverages()
+    {
+        return $this->hasMany(RankingTagTeamAverage::class);
     }
 }

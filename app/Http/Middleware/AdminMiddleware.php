@@ -22,6 +22,6 @@ class AdminMiddleware
         }
         
         // Reindirizza o mostra un messaggio se l'utente non è autorizzato
-        return redirect()->route('home')->with('error', 'Accesso non autorizzato.');
+        return redirect()->to('/')->with('error', 'Accesso non autorizzato.');
     }
 }
