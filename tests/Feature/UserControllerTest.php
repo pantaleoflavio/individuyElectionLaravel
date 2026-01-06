@@ -46,13 +46,11 @@ class UserControllerTest extends TestCase
      */
     public function test_user_can_access_edit_page()
     {
-        Auth::login($this->user);
+        $response = $this->actingAs($this->user)->get(route('user.profile'));
 
-        $response = $this->actingAs($this->user)->get(route('user.edit'));
-
-        $response->assertStatus(200);
-        $response->assertViewIs('user.edit');
-        $response->assertViewHas('user', $this->user);
+        $response->assertOk();
+        $response->assertViewIs('user.profile');
+        $response->assertViewHas(['user', 'wrestlerVotes', 'tagTeamVotes']);
     }
 
     /**

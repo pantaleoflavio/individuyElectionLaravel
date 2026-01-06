@@ -2,8 +2,6 @@
 namespace Database\Factories;
 
 use App\Models\User;
-use App\Models\Ranking;
-use App\Models\Wrestler;
 use App\Models\VoteWrestler;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

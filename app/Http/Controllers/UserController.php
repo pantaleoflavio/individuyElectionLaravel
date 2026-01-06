@@ -59,16 +59,15 @@ class UserController extends Controller
             $user->password = Hash::make($request->password);
         }
     
-        if ($request->hasFile('image')) {
-            $imageName = time() . '.' . $request->image->extension();
-            $request->image->storeAs('public/profile_images', $imageName);
-            $user->image_path = 'profile_images/' . $imageName;
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $imageName = time() . '.' . $request->file('image')->extension();
+            $path = $request->file('image')->storeAs('profile_images', $imageName, 'public');
+            $user->image_path = $path;
         }
     
         $user->save();
     
         return redirect()->route('user.edit')->with('success', 'Profilo aggiornato con successo!');
-    
     }
 
     /**
