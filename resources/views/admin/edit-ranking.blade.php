@@ -22,6 +22,14 @@
                 <textarea rows="3" name="description" id="description" class="form-control">{{ old('description', $ranking->description) }}</textarea>
             </div>
 
+            <div class="form-group mb-3">
+                <label for="status">Status del Ranking:</label>
+                <select name="status" class="form-select">
+                    <option value="1" {{ $ranking->status ? 'selected' : '' }}>Attivo</option>
+                    <option value="0" {{ !$ranking->status ? 'selected' : '' }}>Non Attivo</option>
+                </select>
+            </div>
+
             <div class="text-center">
                 <button type="submit" class="btn btn-primary">Update</button>
             </div>

@@ -16,16 +16,14 @@ class UpdateWrestlerAverage implements ShouldQueue
 
     public int $rankingId;
     public int $wrestlerId;
-    public float $newVoteValue;
 
     /**
      * Create a new job instance.
      *
-     * @param  int    $rankingId
-     * @param  int    $wrestlerId
-     * @param  float  $newVoteValue
+     * @param int $rankingId
+     * @param int $wrestlerId
      */
-    public function __construct(int $rankingId, int $wrestlerId, float $newVoteValue)
+    public function __construct(int $rankingId, int $wrestlerId)
     {
         $this->rankingId = $rankingId;
         $this->wrestlerId = $wrestlerId;

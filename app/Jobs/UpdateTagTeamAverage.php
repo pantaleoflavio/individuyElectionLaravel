@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\VoteTagTeam;
 use App\Models\RankingTagTeamAverage;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -15,44 +16,37 @@ class UpdateTagTeamAverage implements ShouldQueue
 
     public int $rankingId;
     public int $tagTeamId;
-    public float $newVoteValue;
 
-    /**
-     * Create a new job instance.
-     *
-     * @param  int    $rankingId
-     * @param  int    $tagTeamId
-     * @param  float  $newVoteValue
-     */
-    public function __construct(int $rankingId, int $tagTeamId, float $newVoteValue)
+    public function __construct(int $rankingId, int $tagTeamId)
     {
-        $this->rankingId    = $rankingId;
-        $this->tagTeamId    = $tagTeamId;
-        $this->newVoteValue = $newVoteValue;
+        $this->rankingId = $rankingId;
+        $this->tagTeamId = $tagTeamId;
     }
 
-    /**
-     * Execute the job.
-     */
-    public function handle()
+    public function handle(): void
     {
-        $record = RankingTagTeamAverage::where('ranking_id', $this->rankingId)
-            ->where('tag_team_id', $this->tagTeamId)
-            ->first();
+        $query = VoteTagTeam::where('ranking_id', $this->rankingId)
+            ->where('tag_team_id', $this->tagTeamId);
 
-        if ($record) {
-            $record->votes_count  += 1;
-            $record->votes_sum    += $this->newVoteValue;
-            $record->average_vote = round($record->votes_sum / $record->votes_count, 2);
-            $record->save();
-        } else {
-            RankingTagTeamAverage::create([
-                'ranking_id'   => $this->rankingId,
-                'tag_team_id'  => $this->tagTeamId,
-                'votes_count'  => 1,
-                'votes_sum'    => $this->newVoteValue,
-                'average_vote' => round($this->newVoteValue, 2),
-            ]);
+        $votesCount = $query->count();
+
+        // nessun voto -> job safe
+        if ($votesCount === 0) {
+            return;
         }
+
+        $votesSum = $query->sum('vote');
+
+        RankingTagTeamAverage::updateOrCreate(
+            [
+                'ranking_id'  => $this->rankingId,
+                'tag_team_id' => $this->tagTeamId,
+            ],
+            [
+                'votes_count'  => $votesCount,
+                'votes_sum'    => $votesSum,
+                'average_vote' => round($votesSum / $votesCount, 2),
+            ]
+        );
     }
 }

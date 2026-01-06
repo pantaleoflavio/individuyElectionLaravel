@@ -232,7 +232,7 @@ class AdminController extends Controller
         $rankingAttributes = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:rankings,name'],
             'description' => ['required', 'string'],
-            'type' => ['required', 'string','in:wrestler,tag team'],
+            'type' => ['required', 'string','in:wrestler,tag_team'],
             'status' => ['required', 'boolean'],
             'category_id' =>  ['nullable', 'exists:categories,id'],
             'includes_inactive' => ['nullable', 'boolean'],
@@ -267,12 +267,14 @@ class AdminController extends Controller
         $validatedData = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:rankings,name,' . $ranking->id],
             'description' => ['nullable', 'string'],
+            'status' => ['required', 'in:0,1']
         ]);
     
-        // Aggiorniamo solo name e description
+        // Aggiorniamo solo name e description - aggiunto status
         $ranking->update([
             'name' => $validatedData['name'],
             'description' => $validatedData['description'],
+            'status' => $validatedData['status'],
         ]);
     
         return redirect()->route('admin.ranking')->with('success', 'Ranking aggiornato con successo.');

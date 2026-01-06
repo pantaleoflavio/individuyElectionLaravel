@@ -3,7 +3,7 @@
 
     <h2>Partecipanti e Media Voti</h2>
     <ul class="list-group">
-        @foreach($participants as $participant)
+        @forelse($participants as $participant)
             @php
                 $averageVote = $participant->average_vote;
                 $fullStars = floor($averageVote / 2);
@@ -24,7 +24,10 @@
                         <i class="far fa-star" style="color: gray;"></i>
                     @endfor
                 </span>
-            </li>
-        @endforeach
+                @empty
+                <li class="list-group-item text-center text-muted">
+                    Non ci sono ancora voti per questo ranking.
+                </li>
+        @endforelse
     </ul>
 </x-layout>
