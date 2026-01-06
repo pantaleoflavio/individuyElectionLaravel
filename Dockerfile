@@ -7,11 +7,14 @@ WORKDIR /var/www/html
 # Installiamo le estensioni PHP necessarie
 RUN apt-get update && apt-get install -y \
     libzip-dev \
+    libpng-dev libjpeg62-turbo-dev libfreetype6-dev \
     unzip \
     git \
     curl \
     mariadb-client \
-    && docker-php-ext-install pdo pdo_mysql zip
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_mysql zip gd \
+    && rm -rf /var/lib/apt/lists/*
 
 # Installiamo Composer manualmente
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
