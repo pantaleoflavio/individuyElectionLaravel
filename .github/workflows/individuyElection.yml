@@ -41,6 +41,18 @@ jobs:
     - name: Install Composer Dependencies
       run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
+    # Setup Node.js
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+
+    - name: Install NPM dependencies
+      run: npm ci
+
+    - name: Build frontend assets
+      run: npm run build
+
     # Copy .env file and set application key
     - name: Copy .env
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
