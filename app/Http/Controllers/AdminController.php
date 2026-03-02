@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RankingType;
+use App\Http\Requests\UpdateTagTeamRequest;
+use App\Http\Requests\UpdateWrestlerRequest;
 use App\Models\Category;
 use App\Models\Federation;
 use App\Models\Ranking;
@@ -23,7 +25,7 @@ class AdminController extends Controller
         
         // Numero di voti per ranking (divisi per tipo)
         $wrestlerRankings = Ranking::where('type', RankingType::Wrestler->value)->withCount('votesWrestler')->get();
-        $tagTeamRankings = Ranking::where('type', RankingType::TagTeam->value)->withCount('votesTagTeam')->get();
+        $tagTeamRankings = Ranking::where('type', RankingType::TagTeam->value)->withCount('votesTagTeam')->get(); 
         
         // Numero totale di utenti
         $totalUsers = User::count();
@@ -48,10 +50,10 @@ class AdminController extends Controller
         return view('admin.edit-wrestler', compact('wrestler', 'federations', 'categories'));
     }
 
-    public function update_wrestler(Request $request, $id)
+    public function update_wrestler(UpdateWrestlerRequest $request, $id)
     {
         $wrestler = Wrestler::findOrFail($id);
-        $wrestler->update($request->all());
+        $wrestler->update($request->validated());
         
         return redirect()->route('admin.wrestler')->with('success', 'Wrestler aggiornato con successo');
     }
@@ -99,10 +101,10 @@ class AdminController extends Controller
         return view('admin.edit-tag_team', compact('tagTeam', 'federations', 'categories'));
     }
 
-    public function update_tag_team(Request $request, $id)
+    public function update_tag_team(UpdateTagTeamRequest $request, $id)
     {
         $tagTeam = TagTeam::findOrFail($id);
-        $tagTeam->update($request->all());
+        $tagTeam->update($request->validated());
         
         return redirect()->route('admin.tag_team')->with('success', 'Tag Team aggiornato con successo');
     }
