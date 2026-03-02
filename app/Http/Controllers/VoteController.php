@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RankingType;
 use App\Models\Ranking;
 use App\Models\TagTeam;
 use App\Models\Wrestler;
@@ -56,7 +57,7 @@ class VoteController extends Controller
         // Controlliamo che il wrestler appartenga al ranking
         $ranking = Ranking::find($validated['ranking_id']);
 
-        if (!$ranking || $ranking->type !== 'wrestler') {
+        if (!$ranking || $ranking->type !== RankingType::Wrestler->value) {
             return redirect()->back()->with('error', 'Questo ranking non accetta votazioni per wrestler.');
         }
 
@@ -94,7 +95,7 @@ class VoteController extends Controller
         // Controlliamo che il tag team appartenga al ranking
         $ranking = Ranking::find($validated['ranking_id']);
     
-        if (!$ranking || $ranking->type !== 'tag team') {
+        if (!$ranking || $ranking->type !== RankingType::TagTeam->value) {
             return redirect()->back()->with('error', 'Questo ranking non accetta votazioni per tag team.');
         }
     

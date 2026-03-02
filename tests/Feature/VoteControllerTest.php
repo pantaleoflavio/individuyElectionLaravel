@@ -178,6 +178,7 @@ class VoteControllerTest extends TestCase
 
     public function test_user_cannot_submit_duplicate_tag_team_vote(): void
     {
+        /** @var User $user */
         $user = User::factory()->create();
         $category = Category::factory()->create();
         $federation = Federation::factory()->create();

@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RankingType;
 use App\Models\Category;
-use App\Models\User;
-use App\Models\Ranking;
-use App\Models\Wrestler;
 use App\Models\Federation;
+use App\Models\Ranking;
 use App\Models\TagTeam;
+use App\Models\User;
+use App\Models\Wrestler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,8 +22,8 @@ class AdminController extends Controller
         $federationsWithCounts = Federation::withCount(['wrestler', 'tag_team'])->get();
         
         // Numero di voti per ranking (divisi per tipo)
-        $wrestlerRankings = Ranking::where('type', 'wrestler')->withCount('votesWrestler')->get();
-        $tagTeamRankings = Ranking::where('type', 'tag team')->withCount('votesTagTeam')->get();
+        $wrestlerRankings = Ranking::where('type', RankingType::Wrestler->value)->withCount('votesWrestler')->get();
+        $tagTeamRankings = Ranking::where('type', RankingType::TagTeam->value)->withCount('votesTagTeam')->get();
         
         // Numero totale di utenti
         $totalUsers = User::count();
@@ -231,7 +232,7 @@ class AdminController extends Controller
         $rankingAttributes = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:rankings,name'],
             'description' => ['required', 'string'],
-            'type' => ['required', 'string','in:wrestler,tag_team'],
+            'type' => ['required', 'string','in' . implode(',', RankingType::values())],
             'status' => ['required', 'boolean'],
             'category_id' =>  ['nullable', 'exists:categories,id'],
             'includes_inactive' => ['nullable', 'boolean'],

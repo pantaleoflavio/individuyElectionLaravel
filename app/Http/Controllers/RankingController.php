@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Ranking;
-use App\Models\TagTeam;
+use App\Enums\RankingType;
 use App\Models\Category;
+use App\Models\Ranking;
+use App\Models\RankingTagTeamAverage;
+use App\Models\RankingWrestlerAverage;
+use App\Models\TagTeam;
 use App\Models\Wrestler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\RankingTagTeamAverage;
-use App\Models\RankingWrestlerAverage;
 
 class RankingController extends Controller
 {
@@ -28,7 +29,7 @@ class RankingController extends Controller
 
     public function ranking_list_wrestler()
     {
-        $rankings = Ranking::where('type', 'wrestler')
+        $rankings = Ranking::where('type', RankingType::Wrestler->value)
             ->where('status', true) // Mostriamo solo quelli attivi
             ->get(['id', 'name', 'description', 'category_id', 'includes_inactive']);
     
@@ -41,7 +42,7 @@ class RankingController extends Controller
 
     public function ranking_list_tag_team()
     {
-        $rankings = Ranking::where('type', 'tag team')
+        $rankings = Ranking::where('type', RankingType::TagTeam->value)
             ->where('status', true) // Mostriamo solo quelli attivi
             ->get(['id', 'name', 'description', 'category_id', 'includes_inactive']);
     
@@ -59,7 +60,7 @@ class RankingController extends Controller
         $participants = collect();
 
         if ($ranking->type === 'wrestler') {
-            $participants = RankingWrestlerAverage::with('wrestler')
+            $participants = RankingWrestlerAverage::with(RankingType::Wrestler->value)
                 ->where('ranking_id', $rankingId)
                 ->orderByDesc('average_vote')
                 ->get()
@@ -71,7 +72,7 @@ class RankingController extends Controller
                     ];
                 });
 
-        } elseif ($ranking->type === 'tag team') {
+        } elseif ($ranking->type === RankingType::TagTeam->value) {
             $participants = RankingTagTeamAverage::with('tagTeam')
                 ->where('ranking_id', $rankingId)
                 ->orderByDesc('average_vote')
