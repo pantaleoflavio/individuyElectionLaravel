@@ -1,6 +1,7 @@
 <?php
 
 namespace Tests\Feature;
+
 use App\Models\Category;
 use App\Models\Federation;
 use App\Models\Ranking;

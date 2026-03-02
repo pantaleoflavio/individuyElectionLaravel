@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Enums\RankingType;
 use App\Models\Category;
 use App\Models\Federation;

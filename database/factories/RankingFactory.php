@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Enums\RankingType;
-use App\Models\Category;
 use App\Models\Ranking;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

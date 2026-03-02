@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\RankingType;
+use App\Events\VoteAdded;
+use App\Http\Requests\StoreTagTeamVoteRequest;
+use App\Http\Requests\StoreWrestlerVoteRequest;
 use App\Models\Ranking;
 use App\Models\TagTeam;
 use App\Models\Wrestler;
-use App\Events\VoteAdded;
-use App\Models\VoteTagTeam;
-use App\Models\VoteWrestler;
-use Illuminate\Http\Request;
+use App\Services\VoteService;
 use Illuminate\Support\Facades\Auth;
 
 class VoteController extends Controller
 {
+    public function __construct(private readonly VoteService $voteService)
+    {
+    }
+    
     public function index()
     {
         return view('votes.index');
@@ -46,76 +49,32 @@ class VoteController extends Controller
         return $options;
     }
 
-    public function wrestlerVoteStore(Request $request)
+    public function wrestlerVoteStore(StoreWrestlerVoteRequest $request)
     {
-        $validated = $request->validate([
-            'wrestler_id' => 'required|exists:wrestlers,id',
-            'ranking_id' => 'required|exists:rankings,id',
-            'vote' => 'required|numeric|min:0|max:10',
-        ]);
+        $validated = $request->validated();
+        $result = $this->voteService->createWrestlerVote((int) Auth::id(), $validated);
 
-        // Controlliamo che il wrestler appartenga al ranking
-        $ranking = Ranking::find($validated['ranking_id']);
-
-        if (!$ranking || $ranking->type !== RankingType::Wrestler->value) {
-            return redirect()->back()->with('error', 'Questo ranking non accetta votazioni per wrestler.');
+        if (isset($result['error'])) {
+            return redirect()->back()->with('error', $result['error']);
         }
 
-        // Verifica se l'utente ha già votato per questo wrestler in questo ranking
-        $existingVote = VoteWrestler::where('user_id', Auth::id())
-            ->where('wrestler_id', $validated['wrestler_id'])
-            ->where('ranking_id', $validated['ranking_id'])
-            ->first();
-
-        if ($existingVote) {
-            return redirect()->back()->with('error', 'Hai già votato per questo wrestler in questo ranking.');
-        }
-
-        // Registra il voto
-        $vote = VoteWrestler::create([
-            'user_id' => Auth::id(),
-            'wrestler_id' => $validated['wrestler_id'],
-            'ranking_id' => $validated['ranking_id'],
-            'vote' => $validated['vote'],
-        ]);
+        $vote = $result['vote'];
 
         event(new VoteAdded($vote));
 
         return redirect()->route('user.profile')->with('success', 'Il tuo voto è stato registrato con successo.');
     }
 
-    public function tagTeamVoteStore(Request $request)
+    public function tagTeamVoteStore(StoreTagTeamVoteRequest $request)
     {
-        $validated = $request->validate([
-            'tag_team_id' => 'required|exists:tag_teams,id',
-            'ranking_id' => 'required|exists:rankings,id',
-            'vote' => 'required|numeric|min:0|max:10',
-        ]);
-    
-        // Controlliamo che il tag team appartenga al ranking
-        $ranking = Ranking::find($validated['ranking_id']);
-    
-        if (!$ranking || $ranking->type !== RankingType::TagTeam->value) {
-            return redirect()->back()->with('error', 'Questo ranking non accetta votazioni per tag team.');
+        $validated = $request->validated();
+        $result = $this->voteService->createTagTeamVote((int) Auth::id(), $validated);
+
+        if (isset($result['error'])) {
+            return redirect()->back()->with('error', $result['error']);
         }
-    
-        // Verifica se l'utente ha già votato per questo tag team in questo ranking
-        $existingVote = VoteTagTeam::where('user_id', Auth::id())
-            ->where('tag_team_id', $validated['tag_team_id'])
-            ->where('ranking_id', $validated['ranking_id'])
-            ->first();
-    
-        if ($existingVote) {
-            return redirect()->back()->with('error', 'Hai già votato per questo tag team in questo ranking.');
-        }
-    
-        // Registra il voto
-        $vote = VoteTagTeam::create([
-            'user_id' => Auth::id(),
-            'tag_team_id' => $validated['tag_team_id'],
-            'ranking_id' => $validated['ranking_id'],
-            'vote' => $validated['vote'],
-        ]);
+
+        $vote = $result['vote'];
 
         event(new VoteAdded($vote));
     
