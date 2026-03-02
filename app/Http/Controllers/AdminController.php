@@ -44,8 +44,7 @@ class AdminController extends Controller
     public function edit_wrestler($id)
     {
         $wrestler = Wrestler::findOrFail($id);
-        $federations = Federation::all();
-        $categories = Category::all();
+        ['federations' => $federations, 'categories' => $categories] = $this->getParticipantFormOptions();
         
         return view('admin.edit-wrestler', compact('wrestler', 'federations', 'categories'));
     }
@@ -58,9 +57,8 @@ class AdminController extends Controller
         return redirect()->route('admin.wrestler')->with('success', 'Wrestler aggiornato con successo');
     }
 
-    public function delete_wrestler(Request $request, $id)
+    public function delete_wrestler($id)
     {
-        
         $wrestler = Wrestler::findOrFail($id);
 
         $wrestler->delete();
@@ -70,8 +68,7 @@ class AdminController extends Controller
 
     public function add_wrestler()
     {
-        $federations = Federation::all();
-        $categories = Category::all();
+        ['federations' => $federations, 'categories' => $categories] = $this->getParticipantFormOptions();
         return view('admin.add-wrestler', compact('federations', 'categories'));
     }
 
@@ -95,9 +92,8 @@ class AdminController extends Controller
     public function edit_tag_team($id)
     {
         $tagTeam = TagTeam::findOrFail($id);
-        $federations = Federation::all();
-        $categories = Category::all();
-        
+        ['federations' => $federations, 'categories' => $categories] = $this->getParticipantFormOptions();
+                
         return view('admin.edit-tag_team', compact('tagTeam', 'federations', 'categories'));
     }
 
@@ -109,9 +105,8 @@ class AdminController extends Controller
         return redirect()->route('admin.tag_team')->with('success', 'Tag Team aggiornato con successo');
     }
 
-    public function delete_tag_team(Request $request, $id)
+    public function delete_tag_team($id)
     {
-        
         $tagTeam = TagTeam::findOrFail($id);
 
         $tagTeam->delete();
@@ -121,8 +116,7 @@ class AdminController extends Controller
 
     public function add_tag_team()
     {
-        $federations = Federation::all();
-        $categories = Category::all();
+        ['federations' => $federations, 'categories' => $categories] = $this->getParticipantFormOptions();
         return view('admin.add-tag_team', compact('federations', 'categories'));
     }
 
@@ -154,9 +148,8 @@ class AdminController extends Controller
         return redirect()->route('admin.category')->with('success', 'Categoria aggiunta con successo.');
     }    
 
-    public function delete_category(Request $request, $id)
+    public function delete_category($id)
     {
-        
         $category = Category::findOrFail($id);
 
         $category->delete();
@@ -197,9 +190,8 @@ class AdminController extends Controller
         return redirect()->route('admin.federation')->with('success', 'Federazione aggiunta con successo.');
     }    
 
-    public function delete_federation(Request $request, $id)
+    public function delete_federation($id)
     {
-        
         $federation = Federation::findOrFail($id);
 
         $federation->delete();
@@ -245,9 +237,8 @@ class AdminController extends Controller
         return redirect()->route('admin.ranking')->with('success', 'Ranking aggiunto con successo.');
     }    
 
-    public function delete_ranking(Request $request, $id)
+    public function delete_ranking($id)
     {
-        
         $ranking = Ranking::findOrFail($id);
 
         $ranking->delete();
@@ -344,5 +335,11 @@ class AdminController extends Controller
     }
 
 
-
+    private function getParticipantFormOptions(): array
+    {
+        return [
+            'federations' => Federation::all(),
+            'categories' => Category::all(),
+        ];
+    }
 }
