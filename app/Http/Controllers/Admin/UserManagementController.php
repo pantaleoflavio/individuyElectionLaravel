@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class UserManagementController extends Controller
 {
@@ -48,7 +49,7 @@ class UserManagementController extends Controller
     {
         $user = User::findOrFail($id);
 
-        if (auth()->id() == $id) {
+        if (Auth::id() == $id) {
             return redirect()->route('admin.users')->with('error', 'Non puoi eliminare te stesso.');
         }
 
