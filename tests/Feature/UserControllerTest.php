@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class UserControllerTest extends TestCase
@@ -46,11 +45,11 @@ class UserControllerTest extends TestCase
      */
     public function test_user_can_access_edit_page()
     {
-        $response = $this->actingAs($this->user)->get(route('user.profile'));
+        $response = $this->actingAs($this->user)->get(route('user.edit'));
 
         $response->assertOk();
-        $response->assertViewIs('user.profile');
-        $response->assertViewHas(['user', 'wrestlerVotes', 'tagTeamVotes']);
+        $response->assertViewIs('user.edit');
+        $response->assertViewHas('user');
     }
 
     /**
@@ -108,17 +107,15 @@ class UserControllerTest extends TestCase
         ]);
     }
     
-
     /**
      * Test the `destroy` method (stub).
      */
-    //public function test_user_can_be_deleted()
-    //{
-     //   $user = User::factory()->create();
-     //   Auth::login($user);
-
-        // Stub: implement logic in the controller before testing.
-    //    $this->assertTrue(true);
-    //}
-    
+    public function test_user_can_be_deleted()
+    {
+        $response = $this->actingAs($this->user)->delete(route('user.destroy'));
+        $response->assertRedirect('/');
+        $response->assertSessionHas('success', 'Profilo eliminato con successo.');
+        $this->assertDatabaseMissing('users', ['id' => $this->user->id]);
+        $this->assertGuest();
+    }
 }
