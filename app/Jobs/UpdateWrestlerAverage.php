@@ -2,13 +2,14 @@
 
 namespace App\Jobs;
 
-use App\Models\VoteWrestler;
+use App\Services\RankingAverageService;
 use App\Models\RankingWrestlerAverage;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Foundation\Queue\Queueable;
+use App\Models\VoteWrestler;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class UpdateWrestlerAverage implements ShouldQueue
 {
@@ -32,30 +33,14 @@ class UpdateWrestlerAverage implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle()
+    public function handle(RankingAverageService $rankingAverageService)
     {
-        $query = VoteWrestler::where('ranking_id', $this->rankingId)
-            ->where('wrestler_id', $this->wrestlerId);
-
-        $votesCount = $query->count();
-
-        //nessun voto
-        if ($votesCount === 0) {
-            return;
-        }
-
-        $votesSum = $query->sum('vote');
-
-        RankingWrestlerAverage::updateOrCreate(
-            [
-                'ranking_id'  => $this->rankingId,
-                'wrestler_id' => $this->wrestlerId,
-            ],
-            [
-                'votes_count'  => $votesCount,
-                'votes_sum'    => $votesSum,
-                'average_vote' => round($votesSum / $votesCount, 2),
-            ]
+        $rankingAverageService->updateAverage(
+            VoteWrestler::class,
+            RankingWrestlerAverage::class,
+            'wrestler_id',
+            $this->rankingId,
+            $this->wrestlerId,
         );
     }
 }

@@ -9,6 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use App\Services\RankingAverageService;
 
 class UpdateTagTeamAverage implements ShouldQueue
 {
@@ -23,30 +24,14 @@ class UpdateTagTeamAverage implements ShouldQueue
         $this->tagTeamId = $tagTeamId;
     }
 
-    public function handle(): void
+    public function handle(RankingAverageService $rankingAverageService): void
     {
-        $query = VoteTagTeam::where('ranking_id', $this->rankingId)
-            ->where('tag_team_id', $this->tagTeamId);
-
-        $votesCount = $query->count();
-
-        // nessun voto -> job safe
-        if ($votesCount === 0) {
-            return;
-        }
-
-        $votesSum = $query->sum('vote');
-
-        RankingTagTeamAverage::updateOrCreate(
-            [
-                'ranking_id'  => $this->rankingId,
-                'tag_team_id' => $this->tagTeamId,
-            ],
-            [
-                'votes_count'  => $votesCount,
-                'votes_sum'    => $votesSum,
-                'average_vote' => round($votesSum / $votesCount, 2),
-            ]
+                $rankingAverageService->updateAverage(
+            VoteTagTeam::class,
+            RankingTagTeamAverage::class,
+            'tag_team_id',
+            $this->rankingId,
+            $this->tagTeamId,
         );
     }
 }
