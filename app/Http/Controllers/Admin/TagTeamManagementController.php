@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Traits\HasParticipantFormOptions;
+use App\Traits\HasParticipantFormOptions;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTagTeamRequest;
 use App\Http\Requests\UpdateTagTeamRequest;
