@@ -1,18 +1,21 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VoteController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\TagTeamController;
 use App\Http\Controllers\WrestlerController;
 use App\Http\Controllers\FederationController;
 use App\Http\Controllers\RegisteredUserController;
-use App\Http\Middleware\RedirectIfNotAuthenticated;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\Admin\WrestlerManagementController;
+use App\Http\Controllers\Admin\TagTeamManagementController;
+use App\Http\Controllers\Admin\CategoryManagementController;
+use App\Http\Controllers\Admin\FederationManagementController;
+use App\Http\Controllers\Admin\RankingManagementController;
 
 Route::get('/', function () {
     return view('index');
@@ -39,50 +42,50 @@ Route::middleware(['auth.custom'])->group(function () {
 // Admin Routes
 Route::middleware(['auth.custom', 'admin'])->group(function () {
 
-    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
     // User Admin
-    Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
-    Route::delete('/admin/users/{id}', [AdminController::class, 'destroy'])->name('admin.users.delete');
-    Route::patch('/admin/users/{id}/promote', [AdminController::class, 'promote'])->name('admin.users.promote');
-    Route::patch('/admin/users/{id}/demote', [AdminController::class, 'demote'])->name('admin.users.demote');
-
+    Route::get('/admin/users', [UserManagementController::class, 'index'])->name('admin.users');
+    Route::delete('/admin/users/{id}', [UserManagementController::class, 'destroy'])->name('admin.users.delete');
+    Route::patch('/admin/users/{id}/promote', [UserManagementController::class, 'promote'])->name('admin.users.promote');
+    Route::patch('/admin/users/{id}/demote', [UserManagementController::class, 'demote'])->name('admin.users.demote');
+   
     // Wrestler Admin
-    Route::get('/admin/wrestler', [WrestlerController::class, 'wrestler'])->name('admin.wrestler');
-    Route::get('/admin/wrestler/add', [AdminController::class, 'add_wrestler'])->name('admin.wrestler.add');
-    Route::post('/admin/wrestler', [AdminController::class, 'store_wrestler'])->name('admin.wrestler.store');
-    Route::get('/admin/wrestler/{id}/edit', [AdminController::class, 'edit_wrestler'])->name('admin.wrestler.edit');
-    Route::put('/admin/wrestler/{id}', [AdminController::class, 'update_wrestler'])->name('admin.wrestler.update');
-    Route::delete('/admin/wrestler/{id}/delete', [AdminController::class, 'delete_wrestler'])->name('admin.wrestler.delete');
+    Route::get('/admin/wrestler', [WrestlerManagementController::class, 'index'])->name('admin.wrestler');
+    Route::get('/admin/wrestler/add', [WrestlerManagementController::class, 'create'])->name('admin.wrestler.add');
+    Route::post('/admin/wrestler', [WrestlerManagementController::class, 'store'])->name('admin.wrestler.store');
+    Route::get('/admin/wrestler/{id}/edit', [WrestlerManagementController::class, 'edit'])->name('admin.wrestler.edit');
+    Route::put('/admin/wrestler/{id}', [WrestlerManagementController::class, 'update'])->name('admin.wrestler.update');
+    Route::delete('/admin/wrestler/{id}/delete', [WrestlerManagementController::class, 'destroy'])->name('admin.wrestler.delete');
 
     // Tag Teams Admin
-    Route::get('/admin/tag_team', [TagTeamController::class, 'tag_team'])->name('admin.tag_team');
-    Route::get('/admin/tag_team/add', [AdminController::class, 'add_tag_team'])->name('admin.tag_team.add');
-    Route::post('/admin/tag_team', [AdminController::class, 'store_tag_team'])->name('admin.tag_team.store');
-    Route::get('/admin/tag_team/{id}/edit', [AdminController::class, 'edit_tag_team'])->name('admin.tag_team.edit');
-    Route::put('/admin/tag_team/{id}', [AdminController::class, 'update_tag_team'])->name('admin.tag_team.update');
-    Route::delete('/admin/tag_team/{id}/delete', [AdminController::class, 'delete_tag_team'])->name('admin.tag_team.delete');
+    Route::get('/admin/tag_team', [TagTeamManagementController::class, 'index'])->name('admin.tag_team');
+    Route::get('/admin/tag_team/add', [TagTeamManagementController::class, 'create'])->name('admin.tag_team.add');
+    Route::post('/admin/tag_team', [TagTeamManagementController::class, 'store'])->name('admin.tag_team.store');
+    Route::get('/admin/tag_team/{id}/edit', [TagTeamManagementController::class, 'edit'])->name('admin.tag_team.edit');
+    Route::put('/admin/tag_team/{id}', [TagTeamManagementController::class, 'update'])->name('admin.tag_team.update');
+    Route::delete('/admin/tag_team/{id}/delete', [TagTeamManagementController::class, 'destroy'])->name('admin.tag_team.delete');
 
     // Category Admin
-    Route::get('/admin/category', [CategoryController::class, 'index'])->name('admin.category');
-    Route::get('/admin/category/{id}/edit', [AdminController::class, 'edit_category'])->name('admin.category.edit');
-    Route::put('/admin/category/{id}', [AdminController::class, 'update_category'])->name('admin.category.update');
-    Route::post('/admin/category', [AdminController::class, 'store_category'])->name('admin.category.store');
-    Route::delete('/admin/category/{id}/delete', [AdminController::class, 'delete_category'])->name('admin.category.delete');
+    Route::get('/admin/category', [CategoryManagementController::class, 'index'])->name('admin.category');
+    Route::get('/admin/category/{id}/edit', [CategoryManagementController::class, 'edit'])->name('admin.category.edit');
+    Route::put('/admin/category/{id}', [CategoryManagementController::class, 'update'])->name('admin.category.update');
+    Route::post('/admin/category', [CategoryManagementController::class, 'store'])->name('admin.category.store');
+    Route::delete('/admin/category/{id}/delete', [CategoryManagementController::class, 'destroy'])->name('admin.category.delete');
 
     // Federation Admin
-    Route::get('/admin/federation', [FederationController::class, 'admin_index'])->name('admin.federation');
-    Route::get('/admin/federation/{id}/edit', [AdminController::class, 'edit_federation'])->name('admin.federation.edit');
-    Route::put('/admin/federation/{id}', [AdminController::class, 'update_federation'])->name('admin.federation.update');
-    Route::post('/admin/federation', [AdminController::class, 'store_federation'])->name('admin.federation.store');
-    Route::delete('/admin/federation/{id}/delete', [AdminController::class, 'delete_federation'])->name('admin.federation.delete');
+    Route::get('/admin/federation', [FederationManagementController::class, 'index'])->name('admin.federation');
+    Route::get('/admin/federation/{id}/edit', [FederationManagementController::class, 'edit'])->name('admin.federation.edit');
+    Route::put('/admin/federation/{id}', [FederationManagementController::class, 'update'])->name('admin.federation.update');
+    Route::post('/admin/federation', [FederationManagementController::class, 'store'])->name('admin.federation.store');
+    Route::delete('/admin/federation/{id}/delete', [FederationManagementController::class, 'destroy'])->name('admin.federation.delete');
 
     // Ranking Admin
-    Route::get('/admin/ranking', [RankingController::class, 'admin_index'])->name('admin.ranking');
-    Route::get('/admin/ranking/{id}/edit', [AdminController::class, 'edit_ranking'])->name('admin.ranking.edit');
-    Route::put('/admin/ranking/{id}', [AdminController::class, 'update_ranking'])->name('admin.ranking.update');
-    Route::post('/admin/ranking', [AdminController::class, 'store_ranking'])->name('admin.ranking.store');
-    Route::delete('/admin/ranking/{id}/delete', [AdminController::class, 'delete_ranking'])->name('admin.ranking.delete');
+    Route::get('/admin/ranking', [RankingManagementController::class, 'index'])->name('admin.ranking');
+    Route::get('/admin/ranking/{id}/edit', [RankingManagementController::class, 'edit'])->name('admin.ranking.edit');
+    Route::put('/admin/ranking/{id}', [RankingManagementController::class, 'update'])->name('admin.ranking.update');
+    Route::post('/admin/ranking', [RankingManagementController::class, 'store'])->name('admin.ranking.store');
+    Route::delete('/admin/ranking/{id}/delete', [RankingManagementController::class, 'destroy'])->name('admin.ranking.delete');
 });
 
 // Ranking Routes

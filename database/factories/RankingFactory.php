@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Enums\RankingType;
 use App\Models\Ranking;
-use App\Models\Category;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Ranking>
@@ -22,7 +22,7 @@ class RankingFactory extends Factory
         return [
             'name' => $this->faker->sentence,
             'description' => $this->faker->paragraph,
-            'type' => $this->faker->randomElement(['wrestler', 'tag team']), // add later 'federation' or other entities
+            'type' => $this->faker->randomElement(RankingType::values()), // add later 'federation' or other entities
             'status' => $this->faker->boolean,
             'category_id' => $this->faker->numberBetween(1, 10),
             'includes_inactive' => $this->faker->boolean,

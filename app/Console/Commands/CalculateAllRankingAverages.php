@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\RankingType;
 use App\Models\Ranking;
 use App\Models\RankingTagTeamAverage;
 use App\Models\RankingWrestlerAverage;
@@ -23,7 +24,7 @@ class CalculateAllRankingAverages extends Command
         });
 
         // Wrestler rankings
-        $wrestlerRankings = Ranking::where('type', 'wrestler')->get();
+        $wrestlerRankings = Ranking::where('type', RankingType::Wrestler->value)->get();
 
         foreach ($wrestlerRankings as $ranking) {
             $results = DB::table('votes_wrestler')
@@ -57,7 +58,7 @@ class CalculateAllRankingAverages extends Command
         }
 
         // Tag team rankings
-        $tagTeamRankings = Ranking::where('type', 'tag team')->get();
+        $tagTeamRankings = Ranking::where('type', RankingType::TagTeam->value)->get();
 
         foreach ($tagTeamRankings as $ranking) {
             $results = DB::table('votes_tag_team')

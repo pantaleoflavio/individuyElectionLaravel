@@ -1,17 +1,20 @@
 <?php
 
-use App\Models\User;
+namespace Database\Seeders;
+
+use App\Enums\RankingType;
+use App\Models\Category;
+use App\Models\Federation;
 use App\Models\Ranking;
 use App\Models\TagTeam;
-use App\Models\Category;
-use App\Models\Wrestler;
-use App\Models\Federation;
+use App\Models\User;
 use App\Models\VoteTagTeam;
 use App\Models\VoteWrestler;
-use Illuminate\Database\Seeder;
+use App\Models\Wrestler;
 use Database\Seeders\RankingSeeder;
 use Database\Seeders\TagTeamSeeder;
 use Database\Seeders\WrestlerSeeder;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -43,7 +46,7 @@ class DatabaseSeeder extends Seeder
         $users = User::pluck('id');
 
         // VOTI WRESTLER
-        $wrestlerRankings = Ranking::where('type', 'wrestler')->get();
+        $wrestlerRankings = Ranking::where('type', RankingType::Wrestler->value)->get();
 
         foreach ($wrestlerRankings as $ranking) {
             $candidateIds = Wrestler::query()
@@ -75,7 +78,7 @@ class DatabaseSeeder extends Seeder
         }
 
         // VOTI TAG TEAM
-        $tagTeamRankings = Ranking::where('type', 'tag team')->get();
+        $tagTeamRankings = Ranking::where('type', RankingType::TagTeam->value)->get();
 
         foreach ($tagTeamRankings as $ranking) {
             $candidateIds = TagTeam::query()
