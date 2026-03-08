@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
-use Illuminate\Http\Request;
 
 class CategoryManagementController extends Controller
 {
@@ -14,7 +15,7 @@ class CategoryManagementController extends Controller
         return view('admin.category', compact('categories'));
     }
 
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
         $categoryAttributes = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:categories,name'],
@@ -32,7 +33,7 @@ class CategoryManagementController extends Controller
         return view('admin.edit-category', compact('category'));
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateCategoryRequest $request, $id)
     {
         $category = Category::findOrFail($id);
 

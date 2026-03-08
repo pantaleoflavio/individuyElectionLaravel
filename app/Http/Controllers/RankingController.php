@@ -20,13 +20,6 @@ class RankingController extends Controller
         return view('rankings.index', compact('rankings'));
     }
 
-    public function admin_index()
-    {
-        $rankings = Ranking::all();
-        $categories = Category::all();
-        return view('admin.ranking', compact('rankings', 'categories'));
-    }
-
     public function ranking_list_wrestler()
     {
         $rankings = Ranking::where('type', RankingType::Wrestler->value)

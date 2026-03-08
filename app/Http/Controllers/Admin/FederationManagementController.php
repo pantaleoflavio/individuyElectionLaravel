@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreFederationRequest;
+use App\Http\Requests\UpdateFederationRequest;
 use App\Models\Federation;
-use Illuminate\Http\Request;
 
 class FederationManagementController extends Controller
 {
@@ -14,7 +15,7 @@ class FederationManagementController extends Controller
         return view('admin.federation', compact('federations'));
     }
 
-    public function store(Request $request)
+    public function store(StoreFederationRequest $request)
     {
         $federationAttributes = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:federations,name'],
@@ -32,7 +33,7 @@ class FederationManagementController extends Controller
         return view('admin.edit-federation', compact('federation'));
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateFederationRequest $request, $id)
     {
         $federation = Federation::findOrFail($id);
 

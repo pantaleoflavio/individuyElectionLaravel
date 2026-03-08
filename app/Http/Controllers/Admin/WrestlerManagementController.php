@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreWrestlerRequest;
 use App\Http\Requests\UpdateWrestlerRequest;
 use App\Models\Category;
 use App\Models\Federation;
@@ -24,7 +25,7 @@ class WrestlerManagementController extends Controller
         return view('admin.add-wrestler', compact('federations', 'categories'));
     }
 
-    public function store(Request $request)
+    public function store(StoreWrestlerRequest $request)
     {
         $wrestlerAttributes = $request->validate([
             'name' => ['required', 'string', 'max:255'],

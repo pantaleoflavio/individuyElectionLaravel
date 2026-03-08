@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreTagTeamRequest;
 use App\Http\Requests\UpdateTagTeamRequest;
 use App\Models\Category;
 use App\Models\Federation;
@@ -24,7 +25,7 @@ class TagTeamManagementController extends Controller
         return view('admin.add-tag_team', compact('federations', 'categories'));
     }
 
-    public function store(Request $request)
+    public function store(StoreTagTeamRequest $request)
     {
         $tagTeamAttributes = $request->validate([
             'name' => ['required', 'string', 'max:255'],

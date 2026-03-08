@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\RankingType;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreRankingRequest;
+use App\Http\Requests\UpdateRankingRequest;
 use App\Models\Category;
 use App\Models\Ranking;
-use Illuminate\Http\Request;
 
 class RankingManagementController extends Controller
 {
@@ -17,7 +18,7 @@ class RankingManagementController extends Controller
         return view('admin.ranking', compact('rankings', 'categories'));
     }
 
-    public function store(Request $request)
+    public function store(StoreRankingRequest $request)
     {
         $rankingAttributes = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:rankings,name'],
@@ -40,7 +41,7 @@ class RankingManagementController extends Controller
         return view('admin.edit-ranking', compact('ranking', 'categories'));
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateRankingRequest $request, $id)
     {
         $ranking = Ranking::findOrFail($id);
 

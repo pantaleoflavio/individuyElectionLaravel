@@ -30,13 +30,4 @@ class WrestlerController extends Controller
             'ranking' => $ranking,
         ]);
     }
-
-    public function wrestler()
-    {
-        $wrestlers = Wrestler::with(['category', 'federation'])->get();
-        
-        return view('admin.wrestler', compact(
-            'wrestlers',
-        ));
-    }
 }
