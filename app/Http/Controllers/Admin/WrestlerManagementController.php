@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\HasParticipantFormOptions;
 use App\Http\Requests\StoreWrestlerRequest;
 use App\Http\Requests\UpdateWrestlerRequest;
-use App\Models\Category;
-use App\Models\Federation;
 use App\Models\Wrestler;
-use Illuminate\Http\Request;
 
 class WrestlerManagementController extends Controller
 {
+    use HasParticipantFormOptions;
+    
     public function index()
     {
         $wrestlers = Wrestler::with(['category', 'federation'])->get();
@@ -62,13 +62,5 @@ class WrestlerManagementController extends Controller
         $wrestler->delete();
 
         return redirect()->route('admin.wrestler')->with('success', 'Wrestler eliminato con successo');
-    }
-
-    private function getParticipantFormOptions(): array
-    {
-        return [
-            'federations' => Federation::all(),
-            'categories' => Category::all(),
-        ];
     }
 }

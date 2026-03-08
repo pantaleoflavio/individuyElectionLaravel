@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Traits\HasParticipantFormOptions;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTagTeamRequest;
 use App\Http\Requests\UpdateTagTeamRequest;
-use App\Models\Category;
-use App\Models\Federation;
 use App\Models\TagTeam;
-use Illuminate\Http\Request;
 
 class TagTeamManagementController extends Controller
 {
+    use HasParticipantFormOptions;
+    
     public function index()
     {
         $tagTeams = TagTeam::with(['category', 'federation'])->get();
@@ -62,13 +62,5 @@ class TagTeamManagementController extends Controller
         $tagTeam->delete();
 
         return redirect()->route('admin.tag_team')->with('success', 'Tag Team eliminato con successo');
-    }
-
-    private function getParticipantFormOptions(): array
-    {
-        return [
-            'federations' => Federation::all(),
-            'categories' => Category::all(),
-        ];
     }
 }
