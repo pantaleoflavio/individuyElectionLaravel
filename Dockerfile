@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     mariadb-client \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql zip gd \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql pgsql zip gd \
     && rm -rf /var/lib/apt/lists/*
 
 # Installiamo Composer manualmente
@@ -21,6 +21,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 # Copiamo solo i file necessari per Composer (evita di ricreare la cache ad ogni build)
 COPY composer.json composer.lock ./
+
+# Installa le dipendenze di Composer
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Ora copiamo tutto il progetto
 COPY . .
@@ -35,7 +38,4 @@ RUN mkdir -p storage/framework/{sessions,cache,views} && \
 
 RUN git config --global --add safe.directory /var/www/html
 
-# Installa le dipendenze di Composer
-RUN composer install --optimize-autoloader
-
-EXPOSE 9000
+EXPOSE 10000
