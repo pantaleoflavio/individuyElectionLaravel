@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     mariadb-client \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql pdo_pgsql pgsql zip gd \
+    && docker-php-ext-install pdo pdo_pgsql pgsql zip gd \
     && rm -rf /var/lib/apt/lists/*
 
 # Installiamo Composer manualmente

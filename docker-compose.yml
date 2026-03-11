@@ -15,20 +15,8 @@ services:
       - individuy_network
     depends_on:
       - individuydb
-    command: >
-      bash -lc "
-        git config --global --add safe.directory /var/www/html &&
-        composer install --optimize-autoloader &&
-        php artisan migrate --force &&
-
-        if [ ! -f storage/.seeded ]; then
-          php artisan db:seed && touch storage/.seeded;
-        fi &&
-
-        php artisan app:calculate-all-ranking-averages &&
-        exec php-fpm
-      "
-
+    command: ["sh", "/var/www/html/docker/start-app.sh"]
+  
   queue_worker:
     build:
       context: .
@@ -66,7 +54,7 @@ services:
       - individuyelection
 
   individuydb:
-    image: postgres:latest
+    image: postgres:16
     container_name: individuydb
     restart: unless-stopped
     environment:
@@ -84,11 +72,8 @@ services:
     image: adminer:latest
     container_name: individuy_adminer
     restart: unless-stopped
-    environment:
-      PMA_HOST: individuydb
-      MYSQL_ROOT_PASSWORD: password
     ports:
-      - "8080:80"
+      - "8081:8080"
     networks:
       - individuy_network
     depends_on:
