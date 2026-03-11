@@ -23,7 +23,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 # Copiamo solo i file necessari per Composer (evita di ricreare la cache ad ogni build)
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Ora copiamo tutto il progetto
 COPY . .
