@@ -7,6 +7,7 @@ WORKDIR /var/www/html
 # Installiamo le estensioni PHP necessarie
 RUN apt-get update && apt-get install -y \
     libzip-dev \
+    libpq-dev \
     libpng-dev libjpeg62-turbo-dev libfreetype6-dev \
     unzip \
     git \
