@@ -66,24 +66,23 @@ services:
       - individuyelection
 
   individuydb:
-    image: mariadb:latest
+    image: postgres:latest
     container_name: individuydb
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: individuyitalianilaravel
-      MYSQL_USER: root
-      MYSQL_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: individuyitalianilaravel
     ports:
-      - "3307:3306"
+      - "5432:5432"
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data:/var/lib/postgresql/data
     networks:
       - individuy_network
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: individuyphpmyadmin
+  adminer:
+    image: adminer:latest
+    container_name: individuy_adminer
     restart: unless-stopped
     environment:
       PMA_HOST: individuydb
