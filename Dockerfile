@@ -8,6 +8,7 @@ WORKDIR /var/www/html
 RUN apt-get update && apt-get install -y \
     libzip-dev \
     libpq-dev \
+    postgresql-client \
     libpng-dev libjpeg62-turbo-dev libfreetype6-dev \
     unzip \
     git \
