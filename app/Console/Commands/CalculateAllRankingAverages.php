@@ -31,8 +31,8 @@ class CalculateAllRankingAverages extends Command
                 ->select(
                     'wrestler_id',
                     DB::raw('COUNT(*) as votes_count'),
-                    DB::raw('SUM(vote) as votes_sum'),
-                    DB::raw('ROUND(AVG(vote), 2) as average_vote')
+                    DB::raw('SUM(vote)::numeric(10,2) as votes_sum'),
+                    DB::raw('ROUND(AVG(vote)::numeric, 2) as average_vote')
                 )
                 ->where('ranking_id', $ranking->id)
                 ->groupBy('wrestler_id')
@@ -47,7 +47,7 @@ class CalculateAllRankingAverages extends Command
                 'wrestler_id'  => $row->wrestler_id,
                 'votes_count'  => (int) $row->votes_count,
                 'votes_sum'    => (float) $row->votes_sum,
-                'average_vote' => (float) $row->average_vote,
+                'average_vote' => round((float) $row->average_vote, 2),
                 'created_at'   => now(),
                 'updated_at'   => now(),
             ])->all();
@@ -65,8 +65,8 @@ class CalculateAllRankingAverages extends Command
                 ->select(
                     'tag_team_id',
                     DB::raw('COUNT(*) as votes_count'),
-                    DB::raw('SUM(vote) as votes_sum'),
-                    DB::raw('ROUND(AVG(vote), 2) as average_vote')
+                    DB::raw('SUM(vote)::numeric(10,2) as votes_sum'),
+                    DB::raw('ROUND(AVG(vote)::numeric, 2) as average_vote')
                 )
                 ->where('ranking_id', $ranking->id)
                 ->groupBy('tag_team_id')
@@ -81,7 +81,7 @@ class CalculateAllRankingAverages extends Command
                 'tag_team_id'  => $row->tag_team_id,
                 'votes_count'  => (int) $row->votes_count,
                 'votes_sum'    => (float) $row->votes_sum,
-                'average_vote' => (float) $row->average_vote,
+                'average_vote' => round((float) $row->average_vote, 2),
                 'created_at'   => now(),
                 'updated_at'   => now(),
             ])->all();
