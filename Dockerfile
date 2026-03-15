@@ -42,6 +42,7 @@ RUN git config --global --add safe.directory /var/www/html
 # Installa le dipendenze di Composer
 RUN composer install --optimize-autoloader
 
+RUN rm -rf public/build
 RUN npm install
 RUN npm run build
 RUN php artisan view:clear && php artisan config:clear && php artisan cache:clear
