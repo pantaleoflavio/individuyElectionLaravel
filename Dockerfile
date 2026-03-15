@@ -45,5 +45,9 @@ RUN composer install --optimize-autoloader
 RUN rm -rf public/build
 RUN npm install
 RUN npm run build
+COPY docker/render-entrypoint.sh /usr/local/bin/render-entrypoint.sh
+RUN chmod +x /usr/local/bin/render-entrypoint.sh
 
 EXPOSE 9000
+
+CMD ["/usr/local/bin/render-entrypoint.sh"]

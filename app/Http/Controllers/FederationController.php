@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\TagTeam;
 use App\Models\Wrestler;
 use App\Models\Federation;
-use Illuminate\Http\Request;
 
 class FederationController extends Controller
 {
     public function index()
     {
         $federations = Federation::all();
+        if ($federations->isEmpty()) {
+            return redirect()->route('home')->with('error', 'Nessuna federazione disponibile.');
+        }
         return view('federations.index', compact('federations'));
     }
 

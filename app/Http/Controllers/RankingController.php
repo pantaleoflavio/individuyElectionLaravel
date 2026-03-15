@@ -17,6 +17,10 @@ class RankingController extends Controller
     public function index()
     {
         $rankings = Ranking::all();
+
+        if ($rankings->isEmpty()) {
+            return redirect()->route('home')->with('error', 'Nessuna classifica disponibile.');
+        }
         return view('rankings.index', compact('rankings'));
     }
 
@@ -27,7 +31,7 @@ class RankingController extends Controller
             ->get(['id', 'name', 'description', 'category_id', 'includes_inactive']);
     
         if ($rankings->isEmpty()) {
-            return redirect()->route('home')->with('error', 'Le votazioni per i wrestler sono sospese.');
+            return redirect()->route('home')->with('error', 'Nessuna votazione disponibile per i wrestler.');
         }
     
         return view('votes.wrestler.ranking-list', ['rankings' => $rankings]);
@@ -40,7 +44,7 @@ class RankingController extends Controller
             ->get(['id', 'name', 'description', 'category_id', 'includes_inactive']);
     
         if ($rankings->isEmpty()) {
-            return redirect('/')->with('error', 'Le votazioni per i tag team sono sospese.');
+            return redirect('/')->with('error', 'Nessuna votazione disponibile per i tag team.');
         }
     
         return view('votes.tag_team.ranking-list', ['rankings' => $rankings]);
