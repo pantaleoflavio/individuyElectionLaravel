@@ -19,7 +19,7 @@ use App\Http\Controllers\Admin\RankingManagementController;
 
 Route::get('/', function () {
     return view('index');
-});
+})->name('home');
 
 // Auth Routes
 Route::middleware('guest')->group(function(){
@@ -109,7 +109,6 @@ Route::get('/wrestler-candidates', [WrestlerController::class, 'candidates']);
 
 // Tag Team Routes
 Route::get('/tag-team-candidates', [TagTeamController::class, 'candidates']);
-
 
 // Feds Routes
 Route::get('/federations', [FederationController::class, 'index'])->name('federations.index');

@@ -123,4 +123,20 @@ class RankingControllerTest extends TestCase
                 && $participants->last()->participant->id === $t1->id;
         });
     }
+
+    public function test_wrestler_ranking_list_shows_message_when_no_active_rankings(): void
+    {
+        $response = $this->get('/ranking-list-wrestler');
+
+        $response->assertRedirect(route('home'));
+        $response->assertSessionHas('error', 'Nessuna votazione disponibile per i wrestler.');
+    }
+
+    public function test_tag_team_ranking_list_shows_message_when_no_active_rankings(): void
+    {
+        $response = $this->get('/ranking-list-tag-team');
+
+        $response->assertRedirect(route('home'));
+        $response->assertSessionHas('error', 'Nessuna votazione disponibile per i tag team.');
+    }
 }
