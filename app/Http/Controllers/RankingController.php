@@ -3,14 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RankingType;
-use App\Models\Category;
 use App\Models\Ranking;
 use App\Models\RankingTagTeamAverage;
 use App\Models\RankingWrestlerAverage;
-use App\Models\TagTeam;
-use App\Models\Wrestler;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class RankingController extends Controller
 {
