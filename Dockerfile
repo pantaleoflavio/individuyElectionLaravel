@@ -14,6 +14,8 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     mariadb-client \
+    nodejs \
+    npm \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_pgsql pgsql zip gd \
     && rm -rf /var/lib/apt/lists/*
@@ -39,5 +41,8 @@ RUN git config --global --add safe.directory /var/www/html
 
 # Installa le dipendenze di Composer
 RUN composer install --optimize-autoloader
+
+RUN npm install
+RUN npm run build
 
 EXPOSE 9000
