@@ -45,6 +45,5 @@ RUN composer install --optimize-autoloader
 RUN rm -rf public/build
 RUN npm install
 RUN npm run build
-RUN php artisan view:clear && php artisan config:clear && php artisan cache:clear
 
 EXPOSE 9000
