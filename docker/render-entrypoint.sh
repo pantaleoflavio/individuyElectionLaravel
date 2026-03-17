@@ -11,7 +11,7 @@ php artisan migrate --force
 
 if [ -n "${SUPERADMIN_EMAIL:-}" ]; then
   echo "Ensuring superadmin for ${SUPERADMIN_EMAIL}..."
-  php artisan app:set-superadmin "${SUPERADMIN_EMAIL}"
+  php artisan app:set-super-admin
 else
   echo "SUPERADMIN_EMAIL not set, skipping superadmin promotion."
 fi
