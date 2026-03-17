@@ -4,11 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VoteController;
 use App\Http\Controllers\RankingController;
-use App\Http\Controllers\SessionController;
+use App\Http\Controllers\Auth\SessionController;
 use App\Http\Controllers\TagTeamController;
 use App\Http\Controllers\WrestlerController;
 use App\Http\Controllers\FederationController;
-use App\Http\Controllers\RegisteredUserController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\WrestlerManagementController;
@@ -16,6 +16,8 @@ use App\Http\Controllers\Admin\TagTeamManagementController;
 use App\Http\Controllers\Admin\CategoryManagementController;
 use App\Http\Controllers\Admin\FederationManagementController;
 use App\Http\Controllers\Admin\RankingManagementController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
 
 Route::get('/', function () {
     return view('index');
@@ -28,6 +30,12 @@ Route::middleware('guest')->group(function(){
 
     Route::get('/login', [SessionController::class, 'create'])->name('login');
     Route::post('/login', [SessionController::class, 'store']);
+
+    Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
+    Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email');
+
+    Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
+    Route::post('/reset-password', [NewPasswordController::class, 'store'])->name('password.store');
 });
 Route::delete('/logout', [SessionController::class, 'destroy'])->middleware('auth');
 
