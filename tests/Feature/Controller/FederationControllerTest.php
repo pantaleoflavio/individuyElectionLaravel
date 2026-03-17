@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Controller;
 
 use App\Models\Federation;
 use Illuminate\Foundation\Testing\RefreshDatabase;

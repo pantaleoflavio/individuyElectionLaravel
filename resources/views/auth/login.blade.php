@@ -14,6 +14,6 @@
         <button type="submit" name="login" class="btn btn-primary">Accedi</button>
     </form>
         <div class="mt-3">
-            <a href="">Hai dimenticato la password?</a>
+            <a href="{{ route('password.request') }}">Hai dimenticato la password?</a>
         </div>
 </x-layout>

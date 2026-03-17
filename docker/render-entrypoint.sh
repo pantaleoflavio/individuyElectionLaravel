@@ -9,9 +9,11 @@ php artisan optimize:clear
 php artisan package:discover --ansi
 php artisan migrate --force
 
-if [ ! -f storage/.seeded ]; then
-  php artisan db:seed --force || true
-  touch storage/.seeded
+if [ -n "${SUPERADMIN_EMAIL:-}" ]; then
+  echo "Ensuring superadmin for ${SUPERADMIN_EMAIL}..."
+  php artisan app:set-superadmin "${SUPERADMIN_EMAIL}"
+else
+  echo "SUPERADMIN_EMAIL not set, skipping superadmin promotion."
 fi
 
 php artisan app:calculate-all-ranking-averages || true

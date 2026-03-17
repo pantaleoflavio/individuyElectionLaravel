@@ -15,7 +15,7 @@ services:
       - individuy_network
     depends_on:
       - individuydb
-    command: ["sh", "/var/www/html/docker/start-app.sh"]
+    command: [sh -c "php artisan app:bootstrap && php-fpm"]
   
   queue_worker:
     build:
