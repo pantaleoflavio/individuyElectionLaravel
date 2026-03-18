@@ -22,14 +22,16 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // Creazione utente manuale
-        User::firstOrCreate([
-            'name' => 'John Doe',
-            'username' => 'johndoe',
-            'email' => 'john@doe.com',
-            'password' => Hash::make('password'),
-            'role' => 'super_admin',
-            'image_path' => 'profile_images/john_doe_image.jpg',
-        ]);
+        User::firstOrCreate(
+            ['username' => 'johndoe'],
+            [
+                'name' => 'John Doe',
+                'email' => 'john@doe.com',
+                'password' => Hash::make('password'),
+                'role' => 'super_admin',
+                'image_path' => 'profile_images/john_doe_image.jpg',
+            ]
+        );
 
         // Creazione factory
         User::factory()->count(5)->create();
