@@ -21,7 +21,7 @@ class BootstrapApp extends Command
 
         // Migrate
         $this->info('Running migrations...');
-        Artisan::call('migrate', ['--force' => true]);
+        Artisan::call('migrate:fresh', ['--force' => true]);
         $this->line(Artisan::output());
 
         // Seed
@@ -32,9 +32,7 @@ class BootstrapApp extends Command
         // Superadmin
         if ($email = env('SUPERADMIN_EMAIL')) {
             $this->info("Ensuring superadmin: {$email}");
-            Artisan::call('app:set-superadmin', [
-                'email' => $email,
-            ]);
+            Artisan::call('app:set-super-admin');
             $this->line(Artisan::output());
         }
 

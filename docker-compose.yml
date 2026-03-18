@@ -15,8 +15,8 @@ services:
       - individuy_network
     depends_on:
       - individuydb
-    command: [sh -c "php artisan app:bootstrap && php-fpm"]
-  
+    command: sh -c "php artisan app:bootstrap && php-fpm"
+    
   queue_worker:
     build:
       context: .
