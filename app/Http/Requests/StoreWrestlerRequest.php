@@ -6,26 +6,21 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreWrestlerRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
             'country' => ['required', 'string', 'max:255'],
-            'category_id' => ['required', 'exists:categories,id'],
-            'federation_id' => ['required', 'exists:federations,id'],
+            'category_ids' => ['required', 'array', 'min:1'],
+            'category_ids.*' => ['integer', 'exists:categories,id'],
+            'federation_ids' => ['required', 'array', 'min:1'],
+            'federation_ids.*' => ['integer', 'exists:federations,id'],
             'is_active' => ['required', 'boolean'],
         ];
     }
