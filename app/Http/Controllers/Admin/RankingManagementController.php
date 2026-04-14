@@ -7,23 +7,29 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRankingRequest;
 use App\Http\Requests\UpdateRankingRequest;
 use App\Models\Category;
-use App\Models\Federation;
 use App\Models\Ranking;
 
 class RankingManagementController extends Controller
 {
     public function index()
     {
-        $rankings = Ranking::with(['category', 'federation'])->get();
+        $rankings = Ranking::all();
         $categories = Category::all();
-        $federations = Federation::all();
-
-        return view('admin.ranking', compact('rankings', 'categories', 'federations'));
+        return view('admin.ranking', compact('rankings', 'categories'));
     }
 
     public function store(StoreRankingRequest $request)
     {
-        Ranking::create($request->validated());
+        $rankingAttributes = $request->validate([
+            'name' => ['required', 'string', 'max:255', 'unique:rankings,name'],
+            'description' => ['required', 'string'],
+            'type' => ['required', 'string', 'in:' . implode(',', RankingType::values())],
+            'status' => ['required', 'boolean'],
+            'category_id' => ['nullable', 'exists:categories,id'],
+            'includes_inactive' => ['nullable', 'boolean'],
+        ]);
+
+        Ranking::create($rankingAttributes);
 
         return redirect()->route('admin.ranking')->with('success', 'Ranking aggiunto con successo.');
     }
@@ -32,15 +38,24 @@ class RankingManagementController extends Controller
     {
         $ranking = Ranking::findOrFail($id);
         $categories = Category::all();
-        $federations = Federation::all();
-
-        return view('admin.edit-ranking', compact('ranking', 'categories', 'federations'));
+        return view('admin.edit-ranking', compact('ranking', 'categories'));
     }
 
     public function update(UpdateRankingRequest $request, $id)
     {
         $ranking = Ranking::findOrFail($id);
-        $ranking->update($request->validated());
+
+        $validatedData = $request->validate([
+            'name' => ['required', 'string', 'max:255', 'unique:rankings,name,' . $ranking->id],
+            'description' => ['nullable', 'string'],
+            'status' => ['required', 'in:0,1'],
+        ]);
+
+        $ranking->update([
+            'name' => $validatedData['name'],
+            'description' => $validatedData['description'],
+            'status' => $validatedData['status'],
+        ]);
 
         return redirect()->route('admin.ranking')->with('success', 'Ranking aggiornato con successo.');
     }

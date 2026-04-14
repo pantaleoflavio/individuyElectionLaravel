@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Ranking extends Model
 {
@@ -17,37 +15,39 @@ class Ranking extends Model
         'type',
         'status',
         'category_id',
-        'federation_id',
-        'country',
         'includes_inactive',
     ];
 
-    public function category(): BelongsTo
+    /**
+     * Get the category that owns the ranking.
+     */
+    public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function federation(): BelongsTo
-    {
-        return $this->belongsTo(Federation::class);
-    }
-
-    public function votesWrestler(): HasMany
+    /**
+     * Get the votes for the wrestlers in this ranking.
+     */
+    public function votesWrestler()
     {
         return $this->hasMany(VoteWrestler::class);
     }
 
-    public function votesTagTeam(): HasMany
+    /**
+     * Get the votes for the tag teams in this ranking.
+     */
+    public function votesTagTeam()
     {
         return $this->hasMany(VoteTagTeam::class);
     }
 
-    public function wrestlerAverages(): HasMany
+    public function wrestlerAverages()
     {
         return $this->hasMany(RankingWrestlerAverage::class);
     }
 
-    public function tagTeamAverages(): HasMany
+    public function tagTeamAverages()
     {
         return $this->hasMany(RankingTagTeamAverage::class);
     }

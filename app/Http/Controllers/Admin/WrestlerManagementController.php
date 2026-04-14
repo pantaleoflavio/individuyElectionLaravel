@@ -11,10 +11,10 @@ use App\Models\Wrestler;
 class WrestlerManagementController extends Controller
 {
     use HasParticipantFormOptions;
-
+    
     public function index()
     {
-        $wrestlers = Wrestler::with(['categories', 'federations'])->get();
+        $wrestlers = Wrestler::with(['category', 'federation'])->get();
 
         return view('admin.wrestler', compact('wrestlers'));
     }
@@ -27,26 +27,22 @@ class WrestlerManagementController extends Controller
 
     public function store(StoreWrestlerRequest $request)
     {
-        $validated = $request->validated();
-
-        $wrestler = Wrestler::create([
-            'name' => $validated['name'],
-            'description' => $validated['description'],
-            'country' => $validated['country'],
-            'category_id' => $validated['category_ids'][0] ?? null,
-            'federation_id' => $validated['federation_ids'][0] ?? null,
-            'is_active' => $validated['is_active'],
+        $wrestlerAttributes = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'country' => ['required', 'string', 'max:255'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'federation_id' => ['required', 'exists:federations,id'],
+            'is_active' => ['required', 'boolean'],
         ]);
 
-        $wrestler->categories()->sync($validated['category_ids']);
-        $wrestler->federations()->sync($validated['federation_ids']);
+        Wrestler::create($wrestlerAttributes);
 
         return redirect()->route('admin.wrestler')->with('success', 'Wrestler aggiunto con successo.');
     }
 
     public function edit($id)
     {
-        $wrestler = Wrestler::with(['categories', 'federations'])->findOrFail($id);
+        $wrestler = Wrestler::findOrFail($id);
         ['federations' => $federations, 'categories' => $categories] = $this->getParticipantFormOptions();
 
         return view('admin.edit-wrestler', compact('wrestler', 'federations', 'categories'));
@@ -55,19 +51,7 @@ class WrestlerManagementController extends Controller
     public function update(UpdateWrestlerRequest $request, $id)
     {
         $wrestler = Wrestler::findOrFail($id);
-        $validated = $request->validated();
-
-        $wrestler->update([
-            'name' => $validated['name'],
-            'description' => $validated['description'],
-            'country' => $validated['country'],
-            'category_id' => $validated['category_ids'][0] ?? null,
-            'federation_id' => $validated['federation_ids'][0] ?? null,
-            'is_active' => $validated['is_active'],
-        ]);
-
-        $wrestler->categories()->sync($validated['category_ids']);
-        $wrestler->federations()->sync($validated['federation_ids']);
+        $wrestler->update($request->validated());
 
         return redirect()->route('admin.wrestler')->with('success', 'Wrestler aggiornato con successo');
     }

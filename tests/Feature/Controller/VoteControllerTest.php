@@ -24,7 +24,6 @@ class VoteControllerTest extends TestCase
         $ranking = Ranking::factory()->create([
             'type' => 'wrestler',
             'category_id' => $category->id,
-            'federation_id' => $federation->id,
             'status' => true,
         ]);
         $wrestler = Wrestler::factory()->create([
@@ -46,13 +45,13 @@ class VoteControllerTest extends TestCase
 
     public function test_user_can_submit_wrestler_vote_once(): void
     {
+        /** @var User $user */
         $user = User::factory()->create();
         $category = Category::factory()->create();
         $federation = Federation::factory()->create();
         $ranking = Ranking::factory()->create([
             'type' => 'wrestler',
             'category_id' => $category->id,
-            'federation_id' => $federation->id,
             'status' => true,
         ]);
         $wrestler = Wrestler::factory()->create([
@@ -68,7 +67,7 @@ class VoteControllerTest extends TestCase
         ]);
 
         $response->assertRedirect(route('user.profile'));
-        $response->assertSessionHas('success', 'Il tuo voto è stato salvato con successo.');
+        $response->assertSessionHas('success', 'Il tuo voto è stato registrato con successo.');
 
         $this->assertDatabaseHas('votes_wrestler', [
             'user_id' => $user->id,
@@ -78,15 +77,15 @@ class VoteControllerTest extends TestCase
         ]);
     }
 
-    public function test_user_can_update_existing_wrestler_vote(): void
+    public function test_user_cannot_submit_duplicate_wrestler_vote(): void
     {
+        /** @var User $user */
         $user = User::factory()->create();
         $category = Category::factory()->create();
         $federation = Federation::factory()->create();
         $ranking = Ranking::factory()->create([
             'type' => 'wrestler',
             'category_id' => $category->id,
-            'federation_id' => $federation->id,
             'status' => true,
         ]);
         $wrestler = Wrestler::factory()->create([
@@ -99,36 +98,31 @@ class VoteControllerTest extends TestCase
             'user_id' => $user->id,
             'wrestler_id' => $wrestler->id,
             'ranking_id' => $ranking->id,
-            'vote' => 6,
+            'vote' => 9,
         ]);
 
-        $response = $this->actingAs($user)->post(route('vote.wrestler.store'), [
-            'wrestler_id' => $wrestler->id,
-            'ranking_id' => $ranking->id,
-            'vote' => 8,
-        ]);
+        $response = $this->actingAs($user)->from('/voteWrestler/' . $wrestler->id . '/' . $ranking->id)
+            ->post(route('vote.wrestler.store'), [
+                'wrestler_id' => $wrestler->id,
+                'ranking_id' => $ranking->id,
+                'vote' => 8,
+            ]);
 
-        $response->assertRedirect(route('user.profile'));
-        $response->assertSessionHas('success', 'Il tuo voto è stato salvato con successo.');
+        $response->assertRedirect('/voteWrestler/' . $wrestler->id . '/' . $ranking->id);
+        $response->assertSessionHas('error', 'Hai già votato per questo wrestler in questo ranking.');
 
         $this->assertDatabaseCount('votes_wrestler', 1);
-        $this->assertDatabaseHas('votes_wrestler', [
-            'user_id' => $user->id,
-            'wrestler_id' => $wrestler->id,
-            'ranking_id' => $ranking->id,
-            'vote' => 8,
-        ]);
     }
 
     public function test_user_cannot_submit_wrestler_vote_to_tag_team_ranking(): void
     {
+        /** @var User $user */
         $user = User::factory()->create();
         $category = Category::factory()->create();
         $federation = Federation::factory()->create();
         $ranking = Ranking::factory()->create([
             'type' => 'tag team',
             'category_id' => $category->id,
-            'federation_id' => $federation->id,
             'status' => true,
         ]);
         $wrestler = Wrestler::factory()->create([
@@ -144,19 +138,54 @@ class VoteControllerTest extends TestCase
                 'vote' => 6,
             ]);
 
+        $response->assertRedirect('/voteWrestler/' . $wrestler->id . '/' . $ranking->id);
         $response->assertSessionHas('error', 'Questo ranking non accetta votazioni per wrestler.');
         $this->assertDatabaseCount('votes_wrestler', 0);
     }
 
-    public function test_user_can_update_existing_tag_team_vote(): void
+    public function test_user_can_submit_tag_team_vote_once(): void
     {
+        /** @var User $user */
         $user = User::factory()->create();
         $category = Category::factory()->create();
         $federation = Federation::factory()->create();
         $ranking = Ranking::factory()->create([
             'type' => 'tag team',
             'category_id' => $category->id,
+            'status' => true,
+        ]);
+        $tagTeam = TagTeam::factory()->create([
+            'category_id' => $category->id,
             'federation_id' => $federation->id,
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($user)->post(route('vote.tagTeam.store'), [
+            'tag_team_id' => $tagTeam->id,
+            'ranking_id' => $ranking->id,
+            'vote' => 9.5,
+        ]);
+
+        $response->assertRedirect(route('user.profile'));
+        $response->assertSessionHas('success', 'Il tuo voto è stato registrato con successo.');
+
+        $this->assertDatabaseHas('votes_tag_team', [
+            'user_id' => $user->id,
+            'tag_team_id' => $tagTeam->id,
+            'ranking_id' => $ranking->id,
+            'vote' => 9.5,
+        ]);
+    }
+
+    public function test_user_cannot_submit_duplicate_tag_team_vote(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+        $category = Category::factory()->create();
+        $federation = Federation::factory()->create();
+        $ranking = Ranking::factory()->create([
+            'type' => 'tag team',
+            'category_id' => $category->id,
             'status' => true,
         ]);
         $tagTeam = TagTeam::factory()->create([
@@ -172,21 +201,16 @@ class VoteControllerTest extends TestCase
             'vote' => 9,
         ]);
 
-        $response = $this->actingAs($user)->post(route('vote.tagTeam.store'), [
-            'tag_team_id' => $tagTeam->id,
-            'ranking_id' => $ranking->id,
-            'vote' => 7.5,
-        ]);
+        $response = $this->actingAs($user)->from('/voteTagTeam/' . $tagTeam->id . '/' . $ranking->id)
+            ->post(route('vote.tagTeam.store'), [
+                'tag_team_id' => $tagTeam->id,
+                'ranking_id' => $ranking->id,
+                'vote' => 8,
+            ]);
 
-        $response->assertRedirect(route('user.profile'));
-        $response->assertSessionHas('success', 'Il tuo voto è stato salvato con successo.');
+        $response->assertRedirect('/voteTagTeam/' . $tagTeam->id . '/' . $ranking->id);
+        $response->assertSessionHas('error', 'Hai già votato per questo tag team in questo ranking.');
 
         $this->assertDatabaseCount('votes_tag_team', 1);
-        $this->assertDatabaseHas('votes_tag_team', [
-            'user_id' => $user->id,
-            'tag_team_id' => $tagTeam->id,
-            'ranking_id' => $ranking->id,
-            'vote' => 7.5,
-        ]);
     }
 }

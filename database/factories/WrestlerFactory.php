@@ -3,8 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Category;
-use App\Models\Federation;
-use App\Models\Wrestler;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -12,17 +10,19 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class WrestlerFactory extends Factory
 {
-    protected $model = Wrestler::class;
-
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
     public function definition(): array
     {
         return [
             'name' => $this->faker->name(),
-            'description' => $this->faker->sentence(),
             'country' => $this->faker->country(),
-            'category_id' => Category::factory(),
-            'federation_id' => Federation::factory(),
+            'category_id' => $this->faker->numberBetween(1, 10),
             'is_active' => $this->faker->boolean(80),
+            'federation_id' => $this->faker->numberBetween(1, 5),
         ];
     }
 }
