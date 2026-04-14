@@ -18,20 +18,16 @@
             </div>
 
             <div class="form-group mb-3">
-                <label for="description">Descrizione:</label>
-                <textarea rows="3" name="description" id="description" class="form-control" required>{{ $wrestler->description }}</textarea>
-            </div>
-
-            <div class="form-group mb-3">
                 <label for="country">Paese:</label>
-                <input type="text" name="country" id="country" value="{{ $wrestler->country }}" class="form-control" required>
+                <input type="text" name="country" id="country" value="{{ $wrestler->country }}" class="form-control">
             </div>
 
             <div class="form-group mb-3">
-                <label for="category_ids">Categorie:</label>
-                <select name="category_ids[]" id="category_ids" class="form-select" multiple required>
+                <label for="category_id">Categoria:</label>
+                <select name="category_id" id="category_id" class="form-select">
+                    <option value="">Seleziona Categoria</option>
                     @foreach ($categories as $category)
-                        <option value="{{ $category->id }}" {{ $wrestler->categories->contains($category->id) ? 'selected' : '' }}>
+                        <option value="{{ $category->id }}" {{ $category->id == $wrestler->category_id ? 'selected' : '' }}>
                             {{ $category->name }}
                         </option>
                     @endforeach
@@ -39,10 +35,11 @@
             </div>
 
             <div class="form-group mb-3">
-                <label for="federation_ids">Federazioni:</label>
-                <select name="federation_ids[]" id="federation_ids" class="form-select" multiple required>
+                <label for="federation_id">Federazione:</label>
+                <select name="federation_id" id="federation_id" class="form-select">
+                    <option value="">Seleziona Federazione</option>
                     @foreach($federations as $federation)
-                        <option value="{{ $federation->id }}" {{ $wrestler->federations->contains($federation->id) ? 'selected' : '' }}>
+                        <option value="{{ $federation->id }}" {{ $federation->id == $wrestler->federation_id ? 'selected' : '' }}>
                             {{ $federation->name }}
                         </option>
                     @endforeach

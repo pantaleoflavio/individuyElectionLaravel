@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Ranking;
-use App\Models\Wrestler;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -21,31 +20,17 @@ class CandidateService
     /**
      * @param class-string<Model> $modelClass
      */
-    public function getCandidates(string $modelClass, Ranking $ranking): Collection
+    public function getCandidates(string $modelClass, ?string $categoryId, mixed $includesInactive): Collection
     {
         $query = $modelClass::query();
 
-        if ($ranking->category_id) {
-            if ($modelClass === Wrestler::class) {
-                $query->whereHas('categories', fn ($q) => $q->whereKey($ranking->category_id));
-            } else {
-                $query->where('category_id', $ranking->category_id);
-            }
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        } else {
+            $query->whereNull('category_id');
         }
 
-        if ($ranking->federation_id) {
-            if ($modelClass === Wrestler::class) {
-                $query->whereHas('federations', fn ($q) => $q->whereKey($ranking->federation_id));
-            } else {
-                $query->where('federation_id', $ranking->federation_id);
-            }
-        }
-
-        if ($ranking->country) {
-            $query->where('country', $ranking->country);
-        }
-
-        if (!$ranking->includes_inactive) {
+        if (!$includesInactive) {
             $query->where('is_active', true);
         }
 
