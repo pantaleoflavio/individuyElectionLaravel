@@ -41,7 +41,7 @@ class AdminCrudControllersTest extends TestCase
 
         $wrestlerId = Wrestler::where('name', 'Test Wrestler')->value('id');
 
-        $this->assertDatabaseHas('category_wrestler', ['wrestler_id' => $wrestlerId, 'category_id' => $category->id]);
+        $this->assertDatabaseHas('wrestler_category', ['wrestler_id' => $wrestlerId, 'category_id' => $category->id]);
         $this->assertDatabaseHas('federation_wrestler', ['wrestler_id' => $wrestlerId, 'federation_id' => $federation->id]);
 
         $delete = $this->actingAs($admin)->delete(route('admin.wrestler.delete', $wrestlerId));

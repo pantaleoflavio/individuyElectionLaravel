@@ -9,7 +9,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('category_wrestler', function (Blueprint $table) {
+        Schema::create('wrestler_category', function (Blueprint $table) {
             $table->id();
             $table->foreignId('wrestler_id')->constrained()->cascadeOnDelete();
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
@@ -34,13 +34,13 @@ return new class extends Migration
                 }
 
                 if ($rows !== []) {
-                    DB::table('category_wrestler')->insertOrIgnore($rows);
+                    DB::table('wrestler_category')->insertOrIgnore($rows);
                 }
             });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('category_wrestler');
+        Schema::dropIfExists('wrestler_category');
     }
 };
