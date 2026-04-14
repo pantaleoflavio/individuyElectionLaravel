@@ -23,7 +23,7 @@ class RankingController extends Controller
     {
         $rankings = Ranking::where('type', RankingType::Wrestler->value)
             ->where('status', true) // Mostriamo solo quelli attivi
-            ->get(['id', 'name', 'description', 'category_id', 'includes_inactive']);
+            ->get(['id', 'name', 'description', 'category_id', 'federation_id', 'country', 'includes_inactive']);
     
         if ($rankings->isEmpty()) {
             return redirect()->route('home')->with('error', 'Nessuna votazione disponibile per i wrestler.');
@@ -36,7 +36,7 @@ class RankingController extends Controller
     {
         $rankings = Ranking::where('type', RankingType::TagTeam->value)
             ->where('status', true) // Mostriamo solo quelli attivi
-            ->get(['id', 'name', 'description', 'category_id', 'includes_inactive']);
+            ->get(['id', 'name', 'description', 'category_id', 'federation_id', 'country', 'includes_inactive']);
     
         if ($rankings->isEmpty()) {
             return redirect('/')->with('error', 'Nessuna votazione disponibile per i tag team.');

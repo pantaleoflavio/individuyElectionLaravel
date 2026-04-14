@@ -2,11 +2,9 @@
     <x-second-title>Il tuo profilo</x-second-title>
 
     @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
+        <div class="alert alert-success">{{ session('success') }}</div>
     @endif
-    
+
     <div class="container">
         <h4>{{ $user->name }}</h4>
         <p><strong>Username:</strong> {{ $user->username }}</p>
@@ -18,18 +16,12 @@
             </div>
         @endif
     </div>
-    <div class="my-3">
-        <a href="{{ route('user.edit') }}">Modifica Profilo</a>
-    </div>
+    <div class="my-3"><a href="{{ route('user.edit') }}">Modifica Profilo</a></div>
     <div class="mb-3">
-        <form method="POST" action="{{ route('user.destroy') }}"
-            onsubmit="return confirm('Sei sicuro di voler eliminare il tuo profilo?');">
+        <form method="POST" action="{{ route('user.destroy') }}" onsubmit="return confirm('Sei sicuro di voler eliminare il tuo profilo?');">
             @csrf
             @method('DELETE')
-
-            <button type="submit" class="btn btn-danger">
-                Elimina profilo
-            </button>
+            <button type="submit" class="btn btn-danger">Elimina profilo</button>
         </form>
     </div>
 
@@ -38,11 +30,12 @@
     <h3>I tuoi voti ai Wrestler</h3>
     <div class="votes mt-3">
         @forelse ($wrestlerVotes as $vote)
-        <ul>
-            <li>
-                <strong>Wrestler:</strong> {{ $vote->wrestler->name }} - <strong>voto:</strong> {{ $vote->vote }} - <strong>ranking:</strong> {{ $vote->ranking->name }}.
-            </li>
-        </ul>
+            <ul>
+                <li>
+                    <strong>Wrestler:</strong> {{ $vote->wrestler->name }} - <strong>voto:</strong> {{ $vote->vote }} - <strong>ranking:</strong> {{ $vote->ranking->name }}.
+                    <a href="{{ route('vote.wrestler.form', ['wrestler' => $vote->wrestler_id, 'ranking' => $vote->ranking_id]) }}">Modifica voto</a>
+                </li>
+            </ul>
         @empty
             <p>Non hai ancora votato per nessun wrestler.</p>
         @endforelse
@@ -51,11 +44,12 @@
     <h3>I tuoi voti ai Tag Team</h3>
     <div class="votes mt-3">
         @forelse ($tagTeamVotes as $vote)
-        <ul>
-            <li>
-                <strong>Tag Team:</strong> {{ $vote->tagTeam->name }} - <strong>voto:</strong> {{ $vote->vote }} - <strong>ranking:</strong> {{ $vote->ranking->name }}.
-            </li>
-        </ul>
+            <ul>
+                <li>
+                    <strong>Tag Team:</strong> {{ $vote->tagTeam->name }} - <strong>voto:</strong> {{ $vote->vote }} - <strong>ranking:</strong> {{ $vote->ranking->name }}.
+                    <a href="{{ route('vote.tagTeam.form', ['tagTeam' => $vote->tag_team_id, 'ranking' => $vote->ranking_id]) }}">Modifica voto</a>
+                </li>
+            </ul>
         @empty
             <p>Non hai ancora votato per nessun Tag Team.</p>
         @endforelse
