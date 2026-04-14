@@ -14,17 +14,15 @@ class WrestlerController extends Controller
 
     public function candidates(Request $request)
     {
-        $categoryId = $request->query('category_id');
-        $includesInactive = $request->query('includes_inactive');
         $rankingId = $request->query('ranking_id');
 
         $ranking = $this->candidateService->resolveRanking($rankingId);
         if (!$ranking) {
             return redirect()->back()->with('error', 'Ranking non disponibile per questa votazione.');
         }
-    
-        $wrestlers = $this->candidateService->getCandidates(Wrestler::class, $categoryId, $includesInactive);
-    
+
+        $wrestlers = $this->candidateService->getCandidates(Wrestler::class, $ranking);
+
         return view('votes.wrestler.candidates', [
             'wrestlers' => $wrestlers,
             'ranking' => $ranking,

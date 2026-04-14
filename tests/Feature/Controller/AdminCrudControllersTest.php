@@ -29,16 +29,20 @@ class AdminCrudControllersTest extends TestCase
 
         $create = $this->actingAs($admin)->post(route('admin.wrestler.store'), [
             'name' => 'Test Wrestler',
+            'description' => 'Tecnico completo',
             'country' => 'Italy',
-            'category_id' => $category->id,
-            'federation_id' => $federation->id,
+            'category_ids' => [$category->id],
+            'federation_ids' => [$federation->id],
             'is_active' => true,
         ]);
 
         $create->assertRedirect(route('admin.wrestler'));
-        $this->assertDatabaseHas('wrestlers', ['name' => 'Test Wrestler']);
+        $this->assertDatabaseHas('wrestlers', ['name' => 'Test Wrestler', 'description' => 'Tecnico completo']);
 
         $wrestlerId = Wrestler::where('name', 'Test Wrestler')->value('id');
+
+        $this->assertDatabaseHas('category_wrestler', ['wrestler_id' => $wrestlerId, 'category_id' => $category->id]);
+        $this->assertDatabaseHas('federation_wrestler', ['wrestler_id' => $wrestlerId, 'federation_id' => $federation->id]);
 
         $delete = $this->actingAs($admin)->delete(route('admin.wrestler.delete', $wrestlerId));
         $delete->assertRedirect(route('admin.wrestler'));
@@ -102,6 +106,7 @@ class AdminCrudControllersTest extends TestCase
     {
         $admin = $this->admin();
         $category = Category::factory()->create();
+        $federation = Federation::factory()->create();
 
         $create = $this->actingAs($admin)->post(route('admin.ranking.store'), [
             'name' => 'Best of Year',
@@ -109,6 +114,8 @@ class AdminCrudControllersTest extends TestCase
             'type' => RankingType::Wrestler->value,
             'status' => true,
             'category_id' => $category->id,
+            'federation_id' => $federation->id,
+            'country' => 'Italy',
             'includes_inactive' => false,
         ]);
 
@@ -119,6 +126,9 @@ class AdminCrudControllersTest extends TestCase
             'name' => 'Best of Year Updated',
             'description' => 'Updated description',
             'status' => 1,
+            'federation_id' => $federation->id,
+            'country' => 'Japan',
+            'includes_inactive' => 1,
         ]);
 
         $update->assertRedirect(route('admin.ranking'));
@@ -126,6 +136,9 @@ class AdminCrudControllersTest extends TestCase
             'id' => $ranking->id,
             'name' => 'Best of Year Updated',
             'status' => 1,
+            'federation_id' => $federation->id,
+            'country' => 'Japan',
+            'includes_inactive' => 1,
         ]);
     }
 }
