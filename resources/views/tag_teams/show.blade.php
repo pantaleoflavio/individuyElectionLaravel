@@ -5,7 +5,9 @@
         $imageUrl = $tagTeam->image_url;
         $imageSrc = null;
         if ($imageUrl) {
-            if (\Illuminate\Support\Str::startsWith($imageUrl, ['http://', 'https://', '//'])) {
+            if (\Illuminate\Support\Str::startsWith($imageUrl, 'data:image/')) {
+                $imageSrc = $imageUrl;
+            } elseif (\Illuminate\Support\Str::startsWith($imageUrl, ['http://', 'https://', '//'])) {
                 $imageSrc = $imageUrl;
             } elseif (\Illuminate\Support\Str::startsWith($imageUrl, 'www.')) {
                 $imageSrc = 'https://' . $imageUrl;
