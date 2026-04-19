@@ -16,7 +16,7 @@ class UpdateTagTeamRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'image_url' => ['nullable', 'string', 'max:2048'],
+            'image_url' => ['nullable', 'string', 'max:65535'],
             'country' => ['required', 'string', 'max:255'],
             'category_ids' => ['required', 'array', 'min:1'],
             'category_ids.*' => ['required', 'exists:categories,id'],
