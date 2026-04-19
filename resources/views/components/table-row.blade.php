@@ -24,6 +24,8 @@
     <td>
         @if($item instanceof \App\Models\Wrestler)
             <a href="{{ route('wrestlers.show', $item->id) }}">{{ $item->name }}</a>
+        @elseif($item instanceof \App\Models\TagTeam)
+            <a href="{{ route('tag-teams.show', $item->id) }}">{{ $item->name }}</a>
         @else
             {{ $item->name }}
         @endif

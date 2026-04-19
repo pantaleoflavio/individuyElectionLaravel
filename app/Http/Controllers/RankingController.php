@@ -21,9 +21,10 @@ class RankingController extends Controller
 
     public function ranking_list_wrestler()
     {
-        $rankings = Ranking::where('type', RankingType::Wrestler->value)
-            ->where('status', true) // Mostriamo solo quelli attivi
-            ->get(['id', 'name', 'description', 'filter_type', 'category_id', 'federation_id', 'country', 'includes_inactive']);
+        $rankings = Ranking::where('status', true)
+            ->get(['id', 'name', 'description', 'type', 'filter_type', 'category_id', 'federation_id', 'country', 'includes_inactive'])
+            ->filter(fn (Ranking $ranking) => $this->isRankingType($ranking, RankingType::Wrestler))
+            ->values();
     
         if ($rankings->isEmpty()) {
             return redirect()->route('home')->with('error', 'Nessuna votazione disponibile per i wrestler.');
@@ -34,9 +35,10 @@ class RankingController extends Controller
 
     public function ranking_list_tag_team()
     {
-        $rankings = Ranking::where('type', RankingType::TagTeam->value)
-            ->where('status', true) // Mostriamo solo quelli attivi
-            ->get(['id', 'name', 'description', 'filter_type', 'category_id', 'federation_id', 'country', 'includes_inactive']);
+        $rankings = Ranking::where('status', true)
+            ->get(['id', 'name', 'description', 'type', 'filter_type', 'category_id', 'federation_id', 'country', 'includes_inactive'])
+            ->filter(fn (Ranking $ranking) => $this->isRankingType($ranking, RankingType::TagTeam))
+            ->values();
     
         if ($rankings->isEmpty()) {
             return redirect('/')->with('error', 'Nessuna votazione disponibile per i tag team.');
@@ -79,5 +81,19 @@ class RankingController extends Controller
         }
 
         return view('rankings.show', compact('ranking', 'participants'));
+    }
+
+    private function isRankingType(Ranking $ranking, RankingType $expectedType): bool
+    {
+        return $this->normalizeRankingType($ranking->type) === $this->normalizeRankingType($expectedType->value);
+    }
+
+    private function normalizeRankingType(?string $value): string
+    {
+        if (is_null($value)) {
+            return '';
+        }
+
+        return str_replace(['_', '-', ' '], '', mb_strtolower(trim($value)));
     }
 }

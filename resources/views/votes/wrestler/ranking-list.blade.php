@@ -3,7 +3,7 @@
         <x-sub-card
             title="{{ $ranking->name }}"
             text="{{ $ranking->description }}"
-            href="/wrestler-candidates?ranking_id={{ $ranking->id }}"
+            href="{{ route('wrestlers.candidates', ['ranking_id' => $ranking->id]) }}"
         />
     @endforeach
 </x-layout>

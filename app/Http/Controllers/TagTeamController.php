@@ -11,6 +11,15 @@ class TagTeamController extends Controller
     public function __construct(private readonly CandidateService $candidateService)
     {
     }
+
+    public function show(TagTeam $tagTeam)
+    {
+        $tagTeam->load(['categories', 'federations', 'category', 'federation']);
+
+        return view('tag_teams.show', [
+            'tagTeam' => $tagTeam,
+        ]);
+    }
     
     public function candidates(Request $request)
     {

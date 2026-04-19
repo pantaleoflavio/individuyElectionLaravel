@@ -139,4 +139,22 @@ class RankingControllerTest extends TestCase
         $response->assertRedirect(route('home'));
         $response->assertSessionHas('error', 'Nessuna votazione disponibile per i tag team.');
     }
+
+    public function test_tag_team_ranking_list_accepts_legacy_type_formats(): void
+    {
+        $category = Category::factory()->create();
+
+        Ranking::factory()->create([
+            'name' => 'Tag Team Legacy',
+            'type' => 'tag_team',
+            'status' => true,
+            'category_id' => $category->id,
+        ]);
+
+        $response = $this->get('/ranking-list-tag-team');
+
+        $response->assertOk();
+        $response->assertViewIs('votes.tag_team.ranking-list');
+        $response->assertSee('Tag Team Legacy');
+    }
 }

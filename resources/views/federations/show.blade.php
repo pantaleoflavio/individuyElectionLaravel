@@ -20,7 +20,9 @@
     @else
         <ul class="list-group">
             @foreach ($tagTeams as $tagTeam)
-                <li class="list-group-item">{{ $tagTeam->name }}</li>
+                <li class="list-group-item">
+                    <a href="{{ route('tag-teams.show', $tagTeam->id) }}">{{ $tagTeam->name }}</a>
+                </li>
             @endforeach
         </ul>
     @endif

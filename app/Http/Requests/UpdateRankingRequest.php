@@ -31,10 +31,10 @@ class UpdateRankingRequest extends FormRequest
             'status' => ['required', 'in:0,1'],
             'category_id' => ['nullable', 'exists:categories,id'],
             'category_ids' => ['nullable', 'array'],
-            'category_ids.*' => ['required', 'exists:categories,id'],
+            'category_ids.*' => ['nullable', 'exists:categories,id'],
             'federation_id' => ['nullable', 'exists:federations,id'],
             'federation_ids' => ['nullable', 'array'],
-            'federation_ids.*' => ['required', 'exists:federations,id'],
+            'federation_ids.*' => ['nullable', 'exists:federations,id'],
             'country' => ['nullable', 'string', 'max:255'],
             'countries_text' => ['nullable', 'string', 'max:1000'],
         ];

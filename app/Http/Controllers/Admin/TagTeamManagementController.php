@@ -14,7 +14,7 @@ class TagTeamManagementController extends Controller
     
     public function index()
     {
-        $tagTeams = TagTeam::with(['category', 'federation'])->get();
+        $tagTeams = TagTeam::with(['categories', 'federations', 'category', 'federation'])->get();
 
         return view('admin.tag_team', compact('tagTeams'));
     }
@@ -27,22 +27,27 @@ class TagTeamManagementController extends Controller
 
     public function store(StoreTagTeamRequest $request)
     {
-        $tagTeamAttributes = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'country' => ['required', 'string', 'max:255'],
-            'category_id' => ['required', 'exists:categories,id'],
-            'federation_id' => ['required', 'exists:federations,id'],
-            'is_active' => ['required', 'boolean'],
+        $validated = $request->validated();
+
+        $tagTeam = TagTeam::create([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'image_url' => $validated['image_url'] ?? null,
+            'country' => $validated['country'],
+            'category_id' => $validated['category_ids'][0],
+            'federation_id' => $validated['federation_ids'][0],
+            'is_active' => $validated['is_active'],
         ]);
 
-        TagTeam::create($tagTeamAttributes);
+        $tagTeam->categories()->sync($validated['category_ids']);
+        $tagTeam->federations()->sync($validated['federation_ids']);
 
         return redirect()->route('admin.tag_team')->with('success', 'Tag Team aggiunto con successo.');
     }
 
     public function edit($id)
     {
-        $tagTeam = TagTeam::findOrFail($id);
+        $tagTeam = TagTeam::with(['categories', 'federations'])->findOrFail($id);
         ['federations' => $federations, 'categories' => $categories] = $this->getParticipantFormOptions();
 
         return view('admin.edit-tag_team', compact('tagTeam', 'federations', 'categories'));
@@ -51,7 +56,20 @@ class TagTeamManagementController extends Controller
     public function update(UpdateTagTeamRequest $request, $id)
     {
         $tagTeam = TagTeam::findOrFail($id);
-        $tagTeam->update($request->validated());
+        $validated = $request->validated();
+
+        $tagTeam->update([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'image_url' => $validated['image_url'] ?? null,
+            'country' => $validated['country'],
+            'category_id' => $validated['category_ids'][0],
+            'federation_id' => $validated['federation_ids'][0],
+            'is_active' => $validated['is_active'],
+        ]);
+
+        $tagTeam->categories()->sync($validated['category_ids']);
+        $tagTeam->federations()->sync($validated['federation_ids']);
 
         return redirect()->route('admin.tag_team')->with('success', 'Tag Team aggiornato con successo');
     }

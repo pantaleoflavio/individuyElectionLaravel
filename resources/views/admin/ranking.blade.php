@@ -71,7 +71,6 @@
             <div class="form-group mb-3">
                 <label for="category_id">Categoria (facoltativa - e' possibile selezionarne piu di una):</label>
                  <select name="category_ids[]" id="category_ids" class="form-select" multiple>
-                    <option value="">Nessuna</option>
                     @foreach ($categories as $category)
                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                     @endforeach
@@ -80,7 +79,6 @@
             <div class="form-group mb-3">
                 <label for="federation_id">Federazione (facoltativa - e' possibile selezionarne piu di una):</label>
                 <select name="federation_ids[]" id="federation_ids" class="form-select" multiple>
-                    <option value="">Nessuna</option>
                     @foreach ($federations as $federation)
                         <option value="{{ $federation->id }}">{{ $federation->name }}</option>
                     @endforeach

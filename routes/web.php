@@ -114,10 +114,11 @@ Route::middleware(['auth.custom'])->group(function () {
 
 // Wrestler Routes
 Route::get('/wrestlers/{wrestler}', [WrestlerController::class, 'show'])->name('wrestlers.show');
-Route::get('/wrestler-candidates', [WrestlerController::class, 'candidates']);
+Route::get('/wrestler-candidates', [WrestlerController::class, 'candidates'])->name('wrestlers.candidates');
 
 // Tag Team Routes
-Route::get('/tag-team-candidates', [TagTeamController::class, 'candidates']);
+Route::get('/tag-teams/{tagTeam}', [TagTeamController::class, 'show'])->name('tag-teams.show');
+Route::get('/tag-team-candidates', [TagTeamController::class, 'candidates'])->name('tag-teams.candidates');
 
 // Feds Routes
 Route::get('/federations', [FederationController::class, 'index'])->name('federations.index');

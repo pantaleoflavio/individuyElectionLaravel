@@ -50,10 +50,13 @@ class AdminCrudControllersTest extends TestCase
     {
         $admin = $this->admin();
         $category = Category::factory()->create();
+        $newCategory = Category::factory()->create();
         $federation = Federation::factory()->create();
+        $newFederation = Federation::factory()->create();
 
         $tagTeam = TagTeam::factory()->create([
             'name' => 'Old Name',
+            'description' => 'Old description',
             'category_id' => $category->id,
             'federation_id' => $federation->id,
             'is_active' => true,
@@ -61,9 +64,11 @@ class AdminCrudControllersTest extends TestCase
 
         $response = $this->actingAs($admin)->put(route('admin.tag_team.update', $tagTeam->id), [
             'name' => 'New Name',
+            'description' => 'New description',
+            'image_url' => 'https://example.com/tag-team.jpg',
             'country' => $tagTeam->country,
-            'category_id' => $category->id,
-            'federation_id' => $federation->id,
+            'category_ids' => [$newCategory->id],
+            'federation_ids' => [$newFederation->id],
             'is_active' => true,
         ]);
 
@@ -71,6 +76,66 @@ class AdminCrudControllersTest extends TestCase
         $this->assertDatabaseHas('tag_teams', [
             'id' => $tagTeam->id,
             'name' => 'New Name',
+            'description' => 'New description',
+            'category_id' => $newCategory->id,
+            'federation_id' => $newFederation->id,
+        ]);
+
+        $this->assertDatabaseHas('tag_team_category', [
+            'tag_team_id' => $tagTeam->id,
+            'category_id' => $newCategory->id,
+        ]);
+
+        $this->assertDatabaseHas('federation_tag_team', [
+            'tag_team_id' => $tagTeam->id,
+            'federation_id' => $newFederation->id,
+        ]);
+    }
+
+    public function test_admin_can_update_wrestler(): void
+    {
+        $admin = $this->admin();
+        $category = Category::factory()->create();
+        $newCategory = Category::factory()->create();
+        $federation = Federation::factory()->create();
+        $newFederation = Federation::factory()->create();
+
+        $wrestler = Wrestler::factory()->create([
+            'name' => 'Old Wrestler',
+            'description' => 'Old description',
+            'category_id' => $category->id,
+            'federation_id' => $federation->id,
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($admin)->put(route('admin.wrestler.update', $wrestler->id), [
+            'name' => 'New Wrestler',
+            'description' => 'New description',
+            'image_url' => 'https://example.com/wrestler.jpg',
+            'country' => 'Japan',
+            'category_ids' => [$newCategory->id],
+            'federation_ids' => [$newFederation->id],
+            'is_active' => true,
+        ]);
+
+        $response->assertRedirect(route('admin.wrestler'));
+
+        $this->assertDatabaseHas('wrestlers', [
+            'id' => $wrestler->id,
+            'name' => 'New Wrestler',
+            'description' => 'New description',
+            'category_id' => $newCategory->id,
+            'federation_id' => $newFederation->id,
+        ]);
+
+        $this->assertDatabaseHas('wrestler_category', [
+            'wrestler_id' => $wrestler->id,
+            'category_id' => $newCategory->id,
+        ]);
+
+        $this->assertDatabaseHas('federation_wrestler', [
+            'wrestler_id' => $wrestler->id,
+            'federation_id' => $newFederation->id,
         ]);
     }
 
