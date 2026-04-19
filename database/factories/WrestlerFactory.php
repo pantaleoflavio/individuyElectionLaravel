@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,6 +18,7 @@ class WrestlerFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
+            'description' => $this->faker->sentence(),
             'country' => $this->faker->country(),
             'category_id' => $this->faker->numberBetween(1, 10),
             'is_active' => $this->faker->boolean(80),

@@ -19,15 +19,17 @@ class BootstrapApp extends Command
         Artisan::call('optimize:clear');
         $this->line(Artisan::output());
 
-        // Migrate
+        // Migrate (safe mode: never drop all tables in runtime bootstrap)
         $this->info('Running migrations...');
-        Artisan::call('migrate:fresh', ['--force' => true]);
+        Artisan::call('migrate', ['--force' => true]);
         $this->line(Artisan::output());
 
-        // Seed
-        $this->info('Running seeders...');
-        Artisan::call('db:seed', ['--force' => true]);
-        $this->line(Artisan::output());
+        // Optional seed (disabled by default to keep production startup stable)
+        if (env('APP_BOOTSTRAP_SEED', false)) {
+            $this->info('Running seeders...');
+            Artisan::call('db:seed', ['--force' => true]);
+            $this->line(Artisan::output());
+        }
 
         // Superadmin
         if ($email = env('SUPERADMIN_EMAIL')) {

@@ -22,14 +22,11 @@
         <a href="{{ route('user.edit') }}">Modifica Profilo</a>
     </div>
     <div class="mb-3">
-        <form method="POST" action="{{ route('user.destroy') }}"
-            onsubmit="return confirm('Sei sicuro di voler eliminare il tuo profilo?');">
+        <form method="POST" action="{{ route('user.destroy') }}" onsubmit="return confirm('Sei sicuro di voler eliminare il tuo profilo?');">
             @csrf
             @method('DELETE')
 
-            <button type="submit" class="btn btn-danger">
-                Elimina profilo
-            </button>
+            <button type="submit" class="btn btn-danger">Elimina profilo</button>
         </form>
     </div>
 
@@ -40,7 +37,8 @@
         @forelse ($wrestlerVotes as $vote)
         <ul>
             <li>
-                <strong>Wrestler:</strong> {{ $vote->wrestler->name }} - <strong>voto:</strong> {{ $vote->vote }} - <strong>ranking:</strong> {{ $vote->ranking->name }}.
+                               <strong>Wrestler:</strong> <a href="{{ route('wrestlers.show', $vote->wrestler_id) }}">{{ $vote->wrestler->name }}</a> - <strong>voto:</strong> {{ $vote->vote }} - <strong>ranking:</strong> {{ $vote->ranking->name }}.
+                <a href="{{ route('vote.wrestler.form', ['wrestler' => $vote->wrestler_id, 'ranking' => $vote->ranking_id]) }}">Modifica voto</a>
             </li>
         </ul>
         @empty
@@ -54,6 +52,7 @@
         <ul>
             <li>
                 <strong>Tag Team:</strong> {{ $vote->tagTeam->name }} - <strong>voto:</strong> {{ $vote->vote }} - <strong>ranking:</strong> {{ $vote->ranking->name }}.
+                <a href="{{ route('vote.tagTeam.form', ['tagTeam' => $vote->tag_team_id, 'ranking' => $vote->ranking_id]) }}">Modifica voto</a>
             </li>
         </ul>
         @empty

@@ -23,9 +23,12 @@ class StoreTagTeamRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
             'country' => ['required', 'string', 'max:255'],
-            'category_id' => ['required', 'exists:categories,id'],
-            'federation_id' => ['required', 'exists:federations,id'],
+            'category_ids' => ['required', 'array', 'min:1'],
+            'category_ids.*' => ['required', 'exists:categories,id'],
+            'federation_ids' => ['required', 'array', 'min:1'],
+            'federation_ids.*' => ['required', 'exists:federations,id'],
             'is_active' => ['required', 'boolean'],
         ];
     }

@@ -1,9 +1,9 @@
 <x-layout>
     @foreach ($rankings as $ranking)
-        <x-sub-card 
-            title="{{ $ranking->name }}" 
-            text="{{ $ranking->description }}" 
-            href="/tag-team-candidates?category_id={{ $ranking->category_id }}&includes_inactive={{ $ranking->includes_inactive }}&ranking_id={{ $ranking->id }}"
+        <x-sub-card
+            title="{{ $ranking->name }}"
+            text="{{ $ranking->description }}"
+            href="{{ route('tag-teams.candidates', ['ranking_id' => $ranking->id]) }}"
         />
     @endforeach
 </x-layout>
