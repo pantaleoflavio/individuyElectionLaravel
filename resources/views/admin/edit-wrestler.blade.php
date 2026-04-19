@@ -18,32 +18,35 @@
             </div>
 
             <div class="form-group mb-3">
+                <label for="description">Descrizione:</label>
+                <textarea name="description" id="description" class="form-control" rows="3" required>{{ $wrestler->description }}</textarea>
+            </div>
+
+            <div class="form-group mb-3">
                 <label for="country">Paese:</label>
-                <input type="text" name="country" id="country" value="{{ $wrestler->country }}" class="form-control">
+                <input type="text" name="country" id="country" value="{{ $wrestler->country }}" class="form-control" required>
             </div>
 
             <div class="form-group mb-3">
-                <label for="category_id">Categoria:</label>
-                <select name="category_id" id="category_id" class="form-select">
-                    <option value="">Seleziona Categoria</option>
-                    @foreach ($categories as $category)
-                        <option value="{{ $category->id }}" {{ $category->id == $wrestler->category_id ? 'selected' : '' }}>
-                            {{ $category->name }}
-                        </option>
-                    @endforeach
-                </select>
+                <label class="d-block">Categorie:</label>
+                @php($selectedCategoryIds = collect(old('category_ids', $wrestler->categories->pluck('id')->all()))->map(fn($id) => (int) $id)->all())
+                @foreach ($categories as $category)
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="category_ids[]" id="edit_category_{{ $category->id }}" value="{{ $category->id }}" {{ in_array($category->id, $selectedCategoryIds, true) || $wrestler->category_id == $category->id ? 'checked' : '' }}>
+                        <label class="form-check-label" for="edit_category_{{ $category->id }}">{{ $category->name }}</label>
+                    </div>
+                @endforeach
             </div>
 
             <div class="form-group mb-3">
-                <label for="federation_id">Federazione:</label>
-                <select name="federation_id" id="federation_id" class="form-select">
-                    <option value="">Seleziona Federazione</option>
-                    @foreach($federations as $federation)
-                        <option value="{{ $federation->id }}" {{ $federation->id == $wrestler->federation_id ? 'selected' : '' }}>
-                            {{ $federation->name }}
-                        </option>
-                    @endforeach
-                </select>
+                <label class="d-block">Federazioni:</label>
+                @php($selectedFederationIds = collect(old('federation_ids', $wrestler->federations->pluck('id')->all()))->map(fn($id) => (int) $id)->all())
+                @foreach($federations as $federation)
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="federation_ids[]" id="edit_federation_{{ $federation->id }}" value="{{ $federation->id }}" {{ in_array($federation->id, $selectedFederationIds, true) || $wrestler->federation_id == $federation->id ? 'checked' : '' }}>
+                        <label class="form-check-label" for="edit_federation_{{ $federation->id }}">{{ $federation->name }}</label>
+                    </div>
+                @endforeach
             </div>
 
             <div class="form-group mb-3">

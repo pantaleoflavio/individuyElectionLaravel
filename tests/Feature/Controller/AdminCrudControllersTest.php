@@ -29,9 +29,10 @@ class AdminCrudControllersTest extends TestCase
 
         $create = $this->actingAs($admin)->post(route('admin.wrestler.store'), [
             'name' => 'Test Wrestler',
+            'description' => 'Tecnico completo',
             'country' => 'Italy',
-            'category_id' => $category->id,
-            'federation_id' => $federation->id,
+            'category_ids' => [$category->id],
+            'federation_ids' => [$federation->id],
             'is_active' => true,
         ]);
 
@@ -108,6 +109,7 @@ class AdminCrudControllersTest extends TestCase
             'description' => 'Top yearly ranking',
             'type' => RankingType::Wrestler->value,
             'status' => true,
+            'filter_type' => 'category',
             'category_id' => $category->id,
             'includes_inactive' => false,
         ]);
@@ -119,6 +121,8 @@ class AdminCrudControllersTest extends TestCase
             'name' => 'Best of Year Updated',
             'description' => 'Updated description',
             'status' => 1,
+            'filter_type' => 'category',
+            'category_id' => $category->id,
         ]);
 
         $update->assertRedirect(route('admin.ranking'));

@@ -28,6 +28,13 @@ class StoreRankingRequest extends FormRequest
             'type' => ['required', 'string', 'in:' . implode(',', RankingType::values())],
             'status' => ['required', 'boolean'],
             'category_id' => ['nullable', 'exists:categories,id'],
+            'category_ids' => ['nullable', 'array'],
+            'category_ids.*' => ['required', 'exists:categories,id'],
+            'federation_id' => ['nullable', 'exists:federations,id'],
+            'federation_ids' => ['nullable', 'array'],
+            'federation_ids.*' => ['required', 'exists:federations,id'],
+            'country' => ['nullable', 'string', 'max:255'],
+            'countries_text' => ['nullable', 'string', 'max:1000'],
             'includes_inactive' => ['nullable', 'boolean'],
         ];
     }

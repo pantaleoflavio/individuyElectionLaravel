@@ -17,21 +17,16 @@ class VoteService
             return ['error' => 'Questo ranking non accetta votazioni per wrestler.'];
         }
 
-        $existingVote = VoteWrestler::where('user_id', $userId)
-            ->where('wrestler_id', $validated['wrestler_id'])
-            ->where('ranking_id', $validated['ranking_id'])
-            ->first();
-
-        if ($existingVote) {
-            return ['error' => 'Hai già votato per questo wrestler in questo ranking.'];
-        }
-
-        $vote = VoteWrestler::create([
-            'user_id' => $userId,
-            'wrestler_id' => $validated['wrestler_id'],
-            'ranking_id' => $validated['ranking_id'],
-            'vote' => $validated['vote'],
-        ]);
+        $vote = VoteWrestler::updateOrCreate(
+            [
+                'user_id' => $userId,
+                'wrestler_id' => $validated['wrestler_id'],
+                'ranking_id' => $validated['ranking_id'],
+            ],
+            [
+                'vote' => $validated['vote'],
+            ]
+        );
 
         return ['vote' => $vote];
     }
@@ -44,21 +39,16 @@ class VoteService
             return ['error' => 'Questo ranking non accetta votazioni per tag team.'];
         }
 
-        $existingVote = VoteTagTeam::where('user_id', $userId)
-            ->where('tag_team_id', $validated['tag_team_id'])
-            ->where('ranking_id', $validated['ranking_id'])
-            ->first();
-
-        if ($existingVote) {
-            return ['error' => 'Hai già votato per questo tag team in questo ranking.'];
-        }
-
-        $vote = VoteTagTeam::create([
-            'user_id' => $userId,
-            'tag_team_id' => $validated['tag_team_id'],
-            'ranking_id' => $validated['ranking_id'],
-            'vote' => $validated['vote'],
-        ]);
+        $vote = VoteTagTeam::updateOrCreate(
+            [
+                'user_id' => $userId,
+                'tag_team_id' => $validated['tag_team_id'],
+                'ranking_id' => $validated['ranking_id'],
+            ],
+            [
+                'vote' => $validated['vote'],
+            ]
+        );
 
         return ['vote' => $vote];
     }

@@ -14,8 +14,6 @@ class TagTeamController extends Controller
     
     public function candidates(Request $request)
     {
-        $categoryId = $request->query('category_id');
-        $includesInactive = $request->query('includes_inactive');
         $rankingId = $request->query('ranking_id');
 
         $ranking = $this->candidateService->resolveRanking($rankingId);
@@ -23,7 +21,7 @@ class TagTeamController extends Controller
             return redirect()->back()->with('error', 'Ranking non disponibile per questa votazione.');
         }
     
-        $tagTeams = $this->candidateService->getCandidates(TagTeam::class, $categoryId, $includesInactive);
+        $tagTeams = $this->candidateService->getCandidates(TagTeam::class, $ranking);
 
         return view('votes.tag_team.candidates', [
             'tagTeams' => $tagTeams,

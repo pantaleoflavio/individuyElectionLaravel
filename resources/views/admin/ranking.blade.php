@@ -1,57 +1,34 @@
 <x-admin-layout>
     <!-- Ranking List-->
-
+    @php
+        $categories = $categories ?? collect();
+        $federations = $federations ?? collect();
+    @endphp
     <h2>Lista Ranking</h2>
     <div class="row">
-        <table id="">
+        <table>
             <thead>
                 <tr>
                     <th data-sort="name">Ranking<i class="fa-solid" id="icon-name"></i></th>
                     <th>Descrizione</th>
-                    <th data-sort="type">Tipologia<i class="fa-solid" id="icon-type"></th>
-                    <th data-sort="status">Status<i class="fa-solid" id="icon-status"></th>
-                    <th data-sort="category">Stile<i class="fa-solid" id="icon-category"></th>
-                    <th data-sort="includes_inactive">Include Inattivi?<i class="fa-solid" id="icon-includes_inactive"></th>
-                    <th data-sort="date">Data creazione<i class="fa-solid" id="icon-date"></th>
+                    <th data-sort="type">Tipologia<i class="fa-solid" id="icon-type"></i></th>
+                    <th data-sort="status">Status<i class="fa-solid" id="icon-status"></i></th>
+                    <th data-sort="includes_inactive">Include Inattivi?<i class="fa-solid" id="icon-includes_inactive"></i></th>
+                    <th data-sort="date">Data creazione<i class="fa-solid" id="icon-date"></i></th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($rankings as $ranking)
-                    <tr class="">
-                        <td class="">
-                            {{ $ranking->name}}
-                        </td>
-                        <td class="">
-                            {{ $ranking->description}}
-                        </td>
-                        <td class="">
-                            {{ $ranking->type}}
-                        </td>
-                        <td class="">
-                            @if($ranking->status)
-                            <p>attivo</p>
-                            @else
-                            <p>non attivo</p>
-                            @endif
-                        </td>
-                        <td class="">
-                            {{ $ranking->category->name ?? 'N/A'}}
-                        </td>
-                        <td class="">
-                            @if($ranking->includes_inactive)
-                            <p>si</p>
-                            @else
-                            <p>no</p>
-                            @endif
-                        </td>
-                        <td class="">
-                            {{ $ranking->created_at}}
-                        </td>
+                    <tr>
+                        <td>{{ $ranking->name }}</td>
+                        <td>{{ $ranking->description }}</td>
+                        <td>{{ $ranking->type }}</td>
+                        <td>{{ $ranking->status ? 'attivo' : 'non attivo' }}</td>
+                        <td>{{ $ranking->includes_inactive ? 'si' : 'no' }}</td>
+                        <td>{{ $ranking->created_at }}</td>
                         <td class="d-flex justify-content-center align-items-center">
-                            <a href="{{ route('admin.ranking.edit', $ranking->id) }}" class="btn btn-primary mx-1">
-                                Modifica
-                            </a>
+                            <a href="{{ route('admin.ranking.edit', $ranking->id) }}" class="btn btn-primary mx-1">Modifica</a>
                             <form method="post" action="{{ route('admin.ranking.delete', $ranking->id) }}" data-confirm="true">
                                 @csrf
                                 @method('DELETE')
@@ -64,7 +41,7 @@
         </table>
     </div>
     <div class="row">
-        <h3>Aggiungi Federazione</h3>
+        <h3>Aggiungi Ranking</h3>
         <form action="{{ route('admin.ranking.store') }}" method="post" class="form-inline d-inline-block">
             @csrf
             <div class="form-group mb-3 d-block">
@@ -90,16 +67,28 @@
                     <option value="0">Inattivo</option>
                 </select>
             </div>
+
             <div class="form-group mb-3">
-                <label for="category_id">Categoria:</label>
-                <select name="category_id" id="category_id" class="form-select">
-                    <option value="">Seleziona Categoria</option>
+                <label for="category_id">Categoria (facoltativa - e' possibile selezionarne piu di una):</label>
+                 <select name="category_ids[]" id="category_ids" class="form-select" multiple>
+                    <option value="">Nessuna</option>
                     @foreach ($categories as $category)
-                        <option value="{{ $category->id }}">
-                            {{ $category->name }}
-                        </option>
+                        <option value="{{ $category->id }}">{{ $category->name }}</option>
                     @endforeach
                 </select>
+            </div>
+            <div class="form-group mb-3">
+                <label for="federation_id">Federazione (facoltativa - e' possibile selezionarne piu di una):</label>
+                <select name="federation_ids[]" id="federation_ids" class="form-select" multiple>
+                    <option value="">Nessuna</option>
+                    @foreach ($federations as $federation)
+                        <option value="{{ $federation->id }}">{{ $federation->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group mb-3">
+                <label for="countries_text">Nazionalità (facoltativa - e' possibile selezionarne piu di una. Es: Italy, Japan, Mexico):</label>
+                <input type="text" name="countries_text" id="countries_text" class="form-control" placeholder="Italy, Japan, Mexico">
             </div>
             <div class="form-group mb-3">
                 <label for="includes_inactive">Includi Inattivi:</label>

@@ -8,6 +8,8 @@ use App\Http\Requests\StoreWrestlerVoteRequest;
 use App\Models\Ranking;
 use App\Models\TagTeam;
 use App\Models\Wrestler;
+use App\Models\VoteTagTeam;
+use App\Models\VoteWrestler;
 use App\Services\VoteService;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,18 +26,30 @@ class VoteController extends Controller
 
     public function showWrestlerVoteForm(Wrestler $wrestler, Ranking $ranking)
     {
+        $existingVote = VoteWrestler::where('user_id', Auth::id())
+            ->where('wrestler_id', $wrestler->id)
+            ->where('ranking_id', $ranking->id)
+            ->value('vote');
+
         return view('votes.wrestler.vote', [
             'wrestler' => $wrestler,
             'ranking' => $ranking,
+            'existingVote' => $existingVote,
             'voteOptions' => $this->generateVoteOptions(),
         ]);
     }
 
     public function showTagTeamVoteForm(TagTeam $tagTeam, Ranking $ranking)
     {
+        $existingVote = VoteTagTeam::where('user_id', Auth::id())
+            ->where('tag_team_id', $tagTeam->id)
+            ->where('ranking_id', $ranking->id)
+            ->value('vote');
+
         return view('votes.tag_team.vote', [
             'tagTeam' => $tagTeam,
             'ranking' => $ranking,
+            'existingVote' => $existingVote,
             'voteOptions' => $this->generateVoteOptions(),
         ]);
     }
@@ -62,7 +76,7 @@ class VoteController extends Controller
 
         event(new VoteAdded($vote));
 
-        return redirect()->route('user.profile')->with('success', 'Il tuo voto è stato registrato con successo.');
+        return redirect()->route('user.profile')->with('success', 'Il tuo voto è stato salvato con successo.');
     }
 
     public function tagTeamVoteStore(StoreTagTeamVoteRequest $request)
@@ -78,6 +92,6 @@ class VoteController extends Controller
 
         event(new VoteAdded($vote));
     
-        return redirect()->route('user.profile')->with('success', 'Il tuo voto è stato registrato con successo.');
+        return redirect()->route('user.profile')->with('success', 'Il tuo voto è stato salvato con successo.');
     }
 }
