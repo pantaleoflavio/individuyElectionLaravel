@@ -12,6 +12,7 @@ class Wrestler extends Model
     protected $fillable = [
         'name',
         'description',
+        'image_url',
         'country',
         'category_id',
         'federation_id',

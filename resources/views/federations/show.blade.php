@@ -7,7 +7,9 @@
     @else
         <ul class="list-group">
             @foreach ($wrestlers as $wrestler)
-                <li class="list-group-item">{{ $wrestler->name }}</li>
+                <li class="list-group-item">
+                    <a href="{{ route('wrestlers.show', $wrestler->id) }}">{{ $wrestler->name }}</a>
+                </li>
             @endforeach
         </ul>
     @endif

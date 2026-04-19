@@ -33,6 +33,7 @@ class WrestlerManagementController extends Controller
         $wrestler = Wrestler::create([
             'name' => $validated['name'],
             'description' => $validated['description'],
+            'image_url' => $validated['image_url'] ?? null,
             'country' => $validated['country'],
             'category_id' => $validated['category_ids'][0],
             'federation_id' => $validated['federation_ids'][0],
@@ -61,6 +62,7 @@ class WrestlerManagementController extends Controller
         $wrestler->update([
             'name' => $validated['name'],
             'description' => $validated['description'],
+            'image_url' => $validated['image_url'] ?? null,
             'country' => $validated['country'],
             'category_id' => $validated['category_ids'][0],
             'federation_id' => $validated['federation_ids'][0],

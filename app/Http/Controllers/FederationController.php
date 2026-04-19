@@ -21,7 +21,15 @@ class FederationController extends Controller
     {
         $federation = Federation::findOrFail($id);
 
-        $wrestlers = Wrestler::where('federation_id', $id)->get();
+        $wrestlers = Wrestler::with(['federations', 'federation'])
+            ->where(function ($query) use ($id) {
+                $query->where('federation_id', $id)
+                    ->orWhereHas('federations', function ($federationsQuery) use ($id) {
+                        $federationsQuery->where('federations.id', $id);
+                    });
+            })
+            ->distinct()
+            ->get();
 
         $tagTeams = TagTeam::where('federation_id', $id)->get();
 

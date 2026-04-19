@@ -113,6 +113,7 @@ Route::middleware(['auth.custom'])->group(function () {
 });
 
 // Wrestler Routes
+Route::get('/wrestlers/{wrestler}', [WrestlerController::class, 'show'])->name('wrestlers.show');
 Route::get('/wrestler-candidates', [WrestlerController::class, 'candidates']);
 
 // Tag Team Routes

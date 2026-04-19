@@ -21,7 +21,13 @@
 @endphp
 
 <tr>
-    <td>{{ $item->name }}</td>
+    <td>
+        @if($item instanceof \App\Models\Wrestler)
+            <a href="{{ route('wrestlers.show', $item->id) }}">{{ $item->name }}</a>
+        @else
+            {{ $item->name }}
+        @endif
+    </td>
     <td>{{ $categoryNames->isNotEmpty() ? $categoryNames->implode(', ') : 'Nessuno Stile' }}</td>
     <td>{{ $item->country ?? 'Nessuna Nazione' }}</td>
     <td>{{ $federationNames->isNotEmpty() ? $federationNames->implode(', ') : 'Nessuna Federazione' }}</td>

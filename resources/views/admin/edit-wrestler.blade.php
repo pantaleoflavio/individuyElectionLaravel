@@ -23,6 +23,11 @@
             </div>
 
             <div class="form-group mb-3">
+                <label for="image_url">Immagine URL (facoltativa):</label>
+                <input type="url" name="image_url" id="image_url" value="{{ $wrestler->image_url }}" class="form-control" placeholder="https://...">
+            </div>
+
+            <div class="form-group mb-3">
                 <label for="country">Paese:</label>
                 <input type="text" name="country" id="country" value="{{ $wrestler->country }}" class="form-control" required>
             </div>

@@ -12,6 +12,10 @@
                 <textarea name="description" id="description" class="form-control" rows="3" required></textarea>
             </div>
             <div class="form-group mb-3">
+                <label for="image_url">Immagine URL (facoltativa):</label>
+                <input type="url" name="image_url" id="image_url" class="form-control" placeholder="https://...">
+            </div>
+            <div class="form-group mb-3">
                 <label for="country">Paese:</label>
                 <input type="text" name="country" id="country" class="form-control" required>
             </div>

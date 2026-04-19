@@ -37,7 +37,7 @@
         @forelse ($wrestlerVotes as $vote)
         <ul>
             <li>
-                <strong>Wrestler:</strong> {{ $vote->wrestler->name }} - <strong>voto:</strong> {{ $vote->vote }} - <strong>ranking:</strong> {{ $vote->ranking->name }}.
+                               <strong>Wrestler:</strong> <a href="{{ route('wrestlers.show', $vote->wrestler_id) }}">{{ $vote->wrestler->name }}</a> - <strong>voto:</strong> {{ $vote->vote }} - <strong>ranking:</strong> {{ $vote->ranking->name }}.
                 <a href="{{ route('vote.wrestler.form', ['wrestler' => $vote->wrestler_id, 'ranking' => $vote->ranking_id]) }}">Modifica voto</a>
             </li>
         </ul>
