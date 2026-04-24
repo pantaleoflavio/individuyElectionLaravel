@@ -64,7 +64,12 @@ class CandidateService
         }
 
         if (!empty($countries)) {
-            $query->whereIn('country', $countries);
+            $normalizedCountries = array_values(array_unique(array_map(
+                static fn (string $country) => mb_strtolower(trim($country)),
+                $countries
+            )));
+
+            $query->whereRaw('LOWER(TRIM(country)) IN (' . implode(',', array_fill(0, count($normalizedCountries), '?')) . ')', $normalizedCountries);
         }
 
         if (!$ranking->includes_inactive) {

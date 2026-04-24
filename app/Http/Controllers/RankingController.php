@@ -94,6 +94,6 @@ class RankingController extends Controller
             return '';
         }
 
-        return str_replace(['_', '-', ' '], '', mb_strtolower(trim($value)));
+         return str_replace(['_', '-', ' '], '', strtolower(trim($value)));
     }
 }
