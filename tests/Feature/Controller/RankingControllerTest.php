@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Controller;
 
+use App\Enums\RankingType;
 use App\Models\Category;
 use App\Models\Federation;
 use App\Models\Ranking;
+use App\Models\RankingFederationAverage;
 use App\Models\RankingTagTeamAverage;
 use App\Models\RankingWrestlerAverage;
 use App\Models\TagTeam;
@@ -156,5 +158,65 @@ class RankingControllerTest extends TestCase
         $response->assertOk();
         $response->assertViewIs('votes.tag_team.ranking-list');
         $response->assertSee('Tag Team Legacy');
+    }
+
+     public function test_show_federation_ranking_displays_participants_ordered_by_average(): void
+    {
+        $ranking = Ranking::factory()->create([
+            'type' => RankingType::Federation->value,
+        ]);
+
+        $f1 = Federation::factory()->create();
+        $f2 = Federation::factory()->create();
+
+        RankingFederationAverage::create([
+            'ranking_id' => $ranking->id,
+            'federation_id' => $f1->id,
+            'votes_count' => 5,
+            'votes_sum' => 30,
+            'average_vote' => 6.0,
+        ]);
+
+        RankingFederationAverage::create([
+            'ranking_id' => $ranking->id,
+            'federation_id' => $f2->id,
+            'votes_count' => 5,
+            'votes_sum' => 45,
+            'average_vote' => 9.0,
+        ]);
+
+        $response = $this->get(route('rankings.show', $ranking->id));
+
+        $response->assertOk();
+        $response->assertViewIs('rankings.show');
+        $response->assertViewHas('participants', function ($participants) use ($f2, $f1) {
+            return $participants->count() === 2
+                && $participants->first()->participant->id === $f2->id
+                && $participants->last()->participant->id === $f1->id;
+        });
+    }
+
+    public function test_federation_ranking_list_shows_empty_message_when_no_active_rankings(): void
+    {
+        $response = $this->get('/ranking-list-federation');
+
+        $response->assertOk();
+        $response->assertViewIs('votes.federation.ranking-list');
+        $response->assertSee('Non ci sono federation ranking disponibili.');
+    }
+
+    public function test_federation_ranking_list_shows_active_rankings(): void
+    {
+        Ranking::factory()->create([
+            'name' => 'Federation Annual',
+            'type' => RankingType::Federation->value,
+            'status' => true,
+        ]);
+
+        $response = $this->get('/ranking-list-federation');
+
+        $response->assertOk();
+        $response->assertViewIs('votes.federation.ranking-list');
+        $response->assertSee('Federation Annual');
     }
 }

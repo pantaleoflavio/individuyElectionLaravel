@@ -57,6 +57,17 @@
     </div>
     <div class="row">
         <h3>Aggiungi Ranking</h3>
+        <div class="mb-3">
+            <form action="{{ route('admin.ranking.federation.create') }}" method="post" class="d-inline-block">
+                @csrf
+                <button type="submit" class="btn btn-outline-primary" {{ ($federationRankingExists ?? false) ? 'disabled' : '' }}>
+                    Crea ranking federazioni
+                </button>
+            </form>
+            @if($federationRankingExists ?? false)
+                <small class="d-block text-muted mt-2">Il ranking federazioni esiste già.</small>
+            @endif
+        </div>
         <form action="{{ route('admin.ranking.store') }}" method="post" class="form-inline d-inline-block">
             @csrf
             <div class="form-group mb-3 d-block">

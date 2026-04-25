@@ -38,4 +38,23 @@
             <li>Nessuna classifica per tag team disponibile.</li>
         @endforelse
     </ul>
+
+    <!-- Classifiche per Federazioni -->
+    <h4>Federazioni</h4>
+    <ul>
+        @forelse($rankings->where('type', 'federation') as $ranking)
+            <li>
+                <a href="{{ route('rankings.show', $ranking->id) }}">
+                    {{ $ranking->name }} - 
+                    @if($ranking->status)
+                        <span class="mx-2 badge badge-success bg-success">Attiva</span>
+                    @else
+                        <span class="mx-2 badge badge-danger bg-secondary">Inattiva</span>
+                    @endif
+                </a>
+            </li>
+        @empty
+            <li>Nessuna classifica per federazioni disponibile.</li>
+        @endforelse
+    </ul>
 </x-layout>

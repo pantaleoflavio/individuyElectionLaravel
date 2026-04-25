@@ -12,6 +12,8 @@
         if (empty($selectedFederationIds) && $ranking->federation_id) {
             $selectedFederationIds = [$ranking->federation_id];
         }
+
+        $isFederationRanking = $ranking->type === 'federation';
     @endphp
 
     <h2 class="text-center">Modifica Ranking: {{ $ranking->name }}</h2>
@@ -47,6 +49,7 @@
                 <textarea rows="3" name="description" id="description" class="form-control">{{ old('description', $ranking->description) }}</textarea>
             </div>
 
+            @unless($isFederationRanking)
             <div class="form-group mb-3">
                 <label for="category_ids">Categorie (facoltative, selezione multipla):</label>
                 <select name="category_ids[]" id="category_ids" class="form-select" multiple>
@@ -69,7 +72,8 @@
                 <label for="countries_text">Nazionalità (una o più, separate da virgola):</label>
                 <input type="text" name="countries_text" id="countries_text" value="{{ old('countries_text', $ranking->country) }}" class="form-control" placeholder="Italy, Japan, Mexico">
             </div>
-
+            @endunless
+            
             <div class="form-group mb-3">
                 <label for="status">Status del Ranking:</label>
                 <select name="status" class="form-select">

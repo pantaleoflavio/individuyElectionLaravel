@@ -2,8 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\VoteTagTeam;
-use App\Models\VoteWrestler;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;

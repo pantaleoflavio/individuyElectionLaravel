@@ -6,6 +6,7 @@ use App\Enums\RankingType;
 use App\Models\Ranking;
 use App\Models\VoteTagTeam;
 use App\Models\VoteWrestler;
+use App\Models\VoteFederation;
 
 class VoteService
 {
@@ -43,6 +44,28 @@ class VoteService
             [
                 'user_id' => $userId,
                 'tag_team_id' => $validated['tag_team_id'],
+                'ranking_id' => $validated['ranking_id'],
+            ],
+            [
+                'vote' => $validated['vote'],
+            ]
+        );
+
+        return ['vote' => $vote];
+    }
+
+    public function createFederationVote(int $userId, array $validated): array
+    {
+        $ranking = Ranking::find($validated['ranking_id']);
+
+        if (!$ranking || $ranking->type !== RankingType::Federation->value) {
+            return ['error' => 'Questo ranking non accetta votazioni per federazioni.'];
+        }
+
+        $vote = VoteFederation::updateOrCreate(
+            [
+                'user_id' => $userId,
+                'federation_id' => $validated['federation_id'],
                 'ranking_id' => $validated['ranking_id'],
             ],
             [
