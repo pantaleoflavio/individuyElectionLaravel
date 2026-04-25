@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
@@ -23,13 +22,13 @@ class SessionController extends Controller
 
         if (! Auth::attempt($attributes)) {
             throw ValidationException::withMessages([
-                'email' => 'Sorry, those credentials do not match.'
+                'email' => 'Email o password errati, riprova grazie.'
             ]);
         }
 
         request()->session()->regenerate();
 
-        return redirect('/');
+        return redirect('/')->with('success', 'Login effettuato con successo.');
     }
 
     public function destroy()

@@ -23,6 +23,10 @@ Route::get('/', function () {
     return view('index');
 })->name('home');
 
+Route::get('/about-project', function () {
+    return view('about');
+})->name('about');
+
 // Auth Routes
 Route::middleware('guest')->group(function(){
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');

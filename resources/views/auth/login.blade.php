@@ -1,5 +1,16 @@
 <x-layout>
     <x-second-title>Login</x-second-title>
+    @error('email')
+        <div class="alert alert-danger">
+            {{ $message }}
+        </div>
+    @enderror
+
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
     <form action="/login" method="post">
         @csrf
         @method('')
