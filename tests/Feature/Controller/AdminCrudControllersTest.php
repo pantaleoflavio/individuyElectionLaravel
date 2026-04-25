@@ -156,7 +156,7 @@ class AdminCrudControllersTest extends TestCase
             'name' => 'Strong Style',
         ]);
 
-        $update->assertRedirect(route('admin.category.edit', $category->id));
+        $update->assertRedirect(route('admin.category'));
         $this->assertDatabaseHas('categories', ['id' => $category->id, 'name' => 'Strong Style']);
 
         $delete = $this->actingAs($admin)->delete(route('admin.category.delete', $category->id));

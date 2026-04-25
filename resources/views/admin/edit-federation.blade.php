@@ -1,10 +1,4 @@
 <x-admin-layout>
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
     <h3>Modifica Federazione</h3>
     <form action="{{ route('admin.federation.update', $federation->id) }}" method="post" class="form-inline d-inline-block">
         @csrf

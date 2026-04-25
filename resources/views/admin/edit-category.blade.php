@@ -1,10 +1,4 @@
 <x-admin-layout>
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
     <h3>Modifica Stile</h3>
     <form action="{{ route('admin.category.update', $category->id) }}" method="post" class="form-inline d-inline-block">
         @csrf

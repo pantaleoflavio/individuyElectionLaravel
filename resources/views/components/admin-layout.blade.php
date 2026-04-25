@@ -65,6 +65,11 @@
 
             <!-- Admin Main -->
             <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                @if(session('success'))
+                    <div class="alert alert-success mt-3" role="alert">
+                        {{ session('success') }}
+                    </div>
+                @endif
                 {{ $slot }}
             </div>
 

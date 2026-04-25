@@ -1,12 +1,6 @@
 <x-admin-layout>
     <h2 class="text-2xl font-bold mb-4">Lista Utenti</h2>
 
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
     @if(session('error'))
         <div class="alert alert-danger">
             {{ session('error') }}

@@ -8,6 +8,8 @@ use App\Http\Requests\UpdateRankingRequest;
 use App\Models\Category;
 use App\Models\Federation;
 use App\Models\Ranking;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class RankingManagementController extends Controller
 {
@@ -33,13 +35,26 @@ class RankingManagementController extends Controller
         $rankingAttributes['country'] = empty($countries) ? null : implode(', ', $countries);
         $rankingAttributes['filter_type'] = $this->resolveFilterType($categoryIds, $federationIds, $countries);
 
-        $ranking = Ranking::create($rankingAttributes);
+        try {
+            DB::transaction(function () use ($rankingAttributes, $categoryIds, $federationIds, $countries): void {
+                $ranking = Ranking::create($rankingAttributes);
 
-        $ranking->categories()->sync($categoryIds);
-        $ranking->federations()->sync($federationIds);
-        $ranking->rankingCountries()->delete();
-        foreach ($countries as $country) {
-            $ranking->rankingCountries()->create(['country' => $country]);
+                $ranking->categories()->sync($categoryIds);
+                $ranking->federations()->sync($federationIds);
+                $ranking->rankingCountries()->delete();
+                foreach ($countries as $country) {
+                    $ranking->rankingCountries()->create(['country' => $country]);
+                }
+            });
+        } catch (\Throwable $exception) {
+            Log::error('Errore durante il salvataggio del Ranking.', [
+                'message' => $exception->getMessage(),
+                'trace' => $exception->getTraceAsString(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Impossibile salvare il Ranking.');
         }
 
         return redirect()->route('admin.ranking')->with('success', 'Ranking aggiunto con successo.');
@@ -69,13 +84,27 @@ class RankingManagementController extends Controller
         $validatedData['country'] = empty($countries) ? null : implode(', ', $countries);
         $validatedData['filter_type'] = $this->resolveFilterType($categoryIds, $federationIds, $countries);
 
-        $ranking->update($validatedData);
-        $ranking->categories()->sync($categoryIds);
-        $ranking->federations()->sync($federationIds);
-        $ranking->rankingCountries()->delete();
+        try {
+            DB::transaction(function () use ($ranking, $validatedData, $categoryIds, $federationIds, $countries): void {
+                $ranking->update($validatedData);
+                $ranking->categories()->sync($categoryIds);
+                $ranking->federations()->sync($federationIds);
+                $ranking->rankingCountries()->delete();
 
-        foreach ($countries as $country) {
-            $ranking->rankingCountries()->create(['country' => $country]);
+                foreach ($countries as $country) {
+                    $ranking->rankingCountries()->create(['country' => $country]);
+                }
+            });
+        } catch (\Throwable $exception) {
+            Log::error('Errore durante l\'aggiornamento del Ranking.', [
+                'ranking_id' => $ranking->id,
+                'message' => $exception->getMessage(),
+                'trace' => $exception->getTraceAsString(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Impossibile aggiornare il Ranking.');
         }
 
         return redirect()->route('admin.ranking')->with('success', 'Ranking aggiornato con successo.');

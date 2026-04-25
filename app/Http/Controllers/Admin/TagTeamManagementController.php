@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTagTeamRequest;
 use App\Http\Requests\UpdateTagTeamRequest;
 use App\Models\TagTeam;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class TagTeamManagementController extends Controller
 {
@@ -29,18 +31,31 @@ class TagTeamManagementController extends Controller
     {
         $validated = $request->validated();
 
-        $tagTeam = TagTeam::create([
-            'name' => $validated['name'],
-            'description' => $validated['description'],
-            'image_url' => $validated['image_url'] ?? null,
-            'country' => $validated['country'],
-            'category_id' => $validated['category_ids'][0],
-            'federation_id' => $validated['federation_ids'][0],
-            'is_active' => $validated['is_active'],
-        ]);
+        try {
+            DB::transaction(function () use ($validated): void {
+                $tagTeam = TagTeam::create([
+                    'name' => $validated['name'],
+                    'description' => $validated['description'],
+                    'image_url' => $validated['image_url'] ?? null,
+                    'country' => $validated['country'],
+                    'category_id' => $validated['category_ids'][0],
+                    'federation_id' => $validated['federation_ids'][0],
+                    'is_active' => $validated['is_active'],
+                ]);
 
-        $tagTeam->categories()->sync($validated['category_ids']);
-        $tagTeam->federations()->sync($validated['federation_ids']);
+                $tagTeam->categories()->sync($validated['category_ids']);
+                $tagTeam->federations()->sync($validated['federation_ids']);
+            });
+        } catch (\Throwable $exception) {
+            Log::error('Errore durante il salvataggio del Tag Team.', [
+                'message' => $exception->getMessage(),
+                'trace' => $exception->getTraceAsString(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Impossibile salvare il Tag Team.');
+        }
 
         return redirect()->route('admin.tag_team')->with('success', 'Tag Team aggiunto con successo.');
     }
@@ -58,18 +73,32 @@ class TagTeamManagementController extends Controller
         $tagTeam = TagTeam::findOrFail($id);
         $validated = $request->validated();
 
-        $tagTeam->update([
-            'name' => $validated['name'],
-            'description' => $validated['description'],
-            'image_url' => $validated['image_url'] ?? null,
-            'country' => $validated['country'],
-            'category_id' => $validated['category_ids'][0],
-            'federation_id' => $validated['federation_ids'][0],
-            'is_active' => $validated['is_active'],
-        ]);
+        try {
+            DB::transaction(function () use ($tagTeam, $validated): void {
+                $tagTeam->update([
+                    'name' => $validated['name'],
+                    'description' => $validated['description'],
+                    'image_url' => $validated['image_url'] ?? null,
+                    'country' => $validated['country'],
+                    'category_id' => $validated['category_ids'][0],
+                    'federation_id' => $validated['federation_ids'][0],
+                    'is_active' => $validated['is_active'],
+                ]);
 
-        $tagTeam->categories()->sync($validated['category_ids']);
-        $tagTeam->federations()->sync($validated['federation_ids']);
+                $tagTeam->categories()->sync($validated['category_ids']);
+                $tagTeam->federations()->sync($validated['federation_ids']);
+            });
+        } catch (\Throwable $exception) {
+            Log::error('Errore durante l\'aggiornamento del Tag Team.', [
+                'tag_team_id' => $tagTeam->id,
+                'message' => $exception->getMessage(),
+                'trace' => $exception->getTraceAsString(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Impossibile aggiornare il Tag Team.');
+        }
 
         return redirect()->route('admin.tag_team')->with('success', 'Tag Team aggiornato con successo');
     }
