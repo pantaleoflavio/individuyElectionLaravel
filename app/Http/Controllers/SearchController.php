@@ -6,6 +6,7 @@ use App\Models\Federation;
 use App\Models\Ranking;
 use App\Models\TagTeam;
 use App\Models\Wrestler;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class SearchController extends Controller
@@ -24,30 +25,31 @@ class SearchController extends Controller
             ]);
         }
 
-        $wrestlers = Wrestler::query()
-            ->where('name', 'like', "%{$query}%")
+        $wrestlers = $this->caseInsensitiveNameSearch(Wrestler::query(), $query)
             ->orderBy('name')
             ->limit(15)
             ->get();
 
-        $tagTeams = TagTeam::query()
-            ->where('name', 'like', "%{$query}%")
+        $tagTeams = $this->caseInsensitiveNameSearch(TagTeam::query(), $query)
             ->orderBy('name')
             ->limit(15)
             ->get();
 
-        $federations = Federation::query()
-            ->where('name', 'like', "%{$query}%")
+        $federations = $this->caseInsensitiveNameSearch(Federation::query(), $query)
             ->orderBy('name')
             ->limit(15)
             ->get();
 
-        $rankings = Ranking::query()
-            ->where('name', 'like', "%{$query}%")
+        $rankings = $this->caseInsensitiveNameSearch(Ranking::query(), $query)
             ->orderBy('name')
             ->limit(15)
             ->get();
 
         return view('search.index', compact('query', 'wrestlers', 'tagTeams', 'federations', 'rankings'));
+    }
+
+    private function caseInsensitiveNameSearch(Builder $builder, string $query): Builder
+    {
+        return $builder->whereRaw('LOWER(name) LIKE ?', ['%' . mb_strtolower($query) . '%']);
     }
 }
