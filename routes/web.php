@@ -1,23 +1,24 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\VoteController;
-use App\Http\Controllers\RankingController;
-use App\Http\Controllers\Auth\SessionController;
-use App\Http\Controllers\TagTeamController;
-use App\Http\Controllers\WrestlerController;
-use App\Http\Controllers\FederationController;
-use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\UserManagementController;
-use App\Http\Controllers\Admin\WrestlerManagementController;
-use App\Http\Controllers\Admin\TagTeamManagementController;
 use App\Http\Controllers\Admin\CategoryManagementController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FederationManagementController;
 use App\Http\Controllers\Admin\RankingManagementController;
+use App\Http\Controllers\Admin\TagTeamManagementController;
+use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\Admin\WrestlerManagementController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\SessionController;
+use App\Http\Controllers\FederationController;
+use App\Http\Controllers\RankingController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\TagTeamController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\VoteController;
+use App\Http\Controllers\WrestlerController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('index');
@@ -26,6 +27,8 @@ Route::get('/', function () {
 Route::get('/about-project', function () {
     return view('about');
 })->name('about');
+
+Route::get('/search', [SearchController::class, 'index'])->name('search.index');
 
 // Auth Routes
 Route::middleware('guest')->group(function(){

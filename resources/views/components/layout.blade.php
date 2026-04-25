@@ -57,10 +57,16 @@
                         </ul>
                     </li>
                 </ul>
-                <form action="" method="get">
-                    <input type="hidden" name="page" value="search">
-                    <input type="text" name="query" placeholder="Cerca nel sito..." required>
-                    <button type="submit">Cerca</button>
+                <form action="{{ route('search.index') }}" method="get" class="d-flex" role="search">
+                    <input
+                        type="text"
+                        name="query"
+                        class="form-control me-2"
+                        placeholder="Cerca nel sito..."
+                        value="{{ request('query') }}"
+                        aria-label="Cerca nel sito"
+                    >
+                    <button type="submit" class="btn btn-dark">Cerca</button>
                 </form>
                 </div>
             </div>
