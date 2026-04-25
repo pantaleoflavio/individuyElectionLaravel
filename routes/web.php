@@ -1,27 +1,34 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\VoteController;
-use App\Http\Controllers\RankingController;
-use App\Http\Controllers\Auth\SessionController;
-use App\Http\Controllers\TagTeamController;
-use App\Http\Controllers\WrestlerController;
-use App\Http\Controllers\FederationController;
-use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\UserManagementController;
-use App\Http\Controllers\Admin\WrestlerManagementController;
-use App\Http\Controllers\Admin\TagTeamManagementController;
 use App\Http\Controllers\Admin\CategoryManagementController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FederationManagementController;
 use App\Http\Controllers\Admin\RankingManagementController;
+use App\Http\Controllers\Admin\TagTeamManagementController;
+use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\Admin\WrestlerManagementController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\SessionController;
+use App\Http\Controllers\FederationController;
+use App\Http\Controllers\RankingController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\TagTeamController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\VoteController;
+use App\Http\Controllers\WrestlerController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('index');
 })->name('home');
+
+Route::get('/about-project', function () {
+    return view('about');
+})->name('about');
+
+Route::get('/search', [SearchController::class, 'index'])->name('search.index');
 
 // Auth Routes
 Route::middleware('guest')->group(function(){
@@ -94,6 +101,7 @@ Route::middleware(['auth.custom', 'admin'])->group(function () {
     Route::put('/admin/ranking/{id}', [RankingManagementController::class, 'update'])->name('admin.ranking.update');
     Route::post('/admin/ranking', [RankingManagementController::class, 'store'])->name('admin.ranking.store');
     Route::delete('/admin/ranking/{id}/delete', [RankingManagementController::class, 'destroy'])->name('admin.ranking.delete');
+        Route::post('/admin/ranking/create-federation', [RankingManagementController::class, 'createFederationRanking'])->name('admin.ranking.federation.create');
 });
 
 // Ranking Routes
@@ -102,6 +110,7 @@ Route::get('/rankings/show/{ranking}', [RankingController::class, 'show'])->name
 
 Route::get('/ranking-list-wrestler', [RankingController::class, 'ranking_list_wrestler']);
 Route::get('/ranking-list-tag-team', [RankingController::class, 'ranking_list_tag_team']);
+Route::get('/ranking-list-federation', [RankingController::class, 'ranking_list_federation']);
 
 // Vote Routes
 Route::get('/vote-lists', [VoteController::class, 'index'])->name('vote.lists.index');
@@ -110,6 +119,8 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::post('/voteWrestler', [VoteController::class, 'wrestlerVoteStore'])->name('vote.wrestler.store');
     Route::get('/voteTagTeam/{tagTeam}/{ranking}', [VoteController::class, 'showTagTeamVoteForm'])->name('vote.tagTeam.form');
     Route::post('/voteTagTeam', [VoteController::class, 'tagTeamVoteStore'])->name('vote.tagTeam.store');
+    Route::get('/voteFederation/{federation}/{ranking}', [VoteController::class, 'showFederationVoteForm'])->name('vote.federation.form');
+    Route::post('/voteFederation', [VoteController::class, 'federationVoteStore'])->name('vote.federation.store');
 });
 
 // Wrestler Routes
@@ -123,3 +134,4 @@ Route::get('/tag-team-candidates', [TagTeamController::class, 'candidates'])->na
 // Feds Routes
 Route::get('/federations', [FederationController::class, 'index'])->name('federations.index');
 Route::get('/list-per-fed&{id}', [FederationController::class, 'show'])->name('federations.show');
+Route::get('/federation-candidates', [FederationController::class, 'candidates'])->name('federations.candidates');

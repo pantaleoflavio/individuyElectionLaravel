@@ -6,6 +6,7 @@ enum RankingType: string
 {
     case Wrestler = 'wrestler';
     case TagTeam = 'tag team';
+    case Federation = 'federation';
 
     public static function values(): array
     {

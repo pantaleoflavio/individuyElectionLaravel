@@ -8,6 +8,7 @@ use App\Models\RankingTagTeamAverage;
 use App\Models\RankingWrestlerAverage;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use App\Models\RankingFederationAverage;
 
 class CalculateAllRankingAverages extends Command
 {
@@ -21,6 +22,7 @@ class CalculateAllRankingAverages extends Command
         DB::transaction(function () {
             RankingWrestlerAverage::query()->delete();
             RankingTagTeamAverage::query()->delete();
+            RankingFederationAverage::query()->delete();
         });
 
         // Wrestler rankings
@@ -89,6 +91,40 @@ class CalculateAllRankingAverages extends Command
             RankingTagTeamAverage::insert($payload);
 
             $this->info("Tag team ranking {$ranking->id}: inserted " . count($payload) . " rows");
+        }
+
+         // Federation rankings
+        $federationRankings = Ranking::where('type', RankingType::Federation->value)->get();
+
+        foreach ($federationRankings as $ranking) {
+            $results = DB::table('votes_federation')
+                ->select(
+                    'federation_id',
+                    DB::raw('COUNT(*) as votes_count'),
+                    DB::raw('SUM(vote)::numeric(10,2) as votes_sum'),
+                    DB::raw('ROUND(AVG(vote)::numeric, 2) as average_vote')
+                )
+                ->where('ranking_id', $ranking->id)
+                ->groupBy('federation_id')
+                ->get();
+
+            if ($results->isEmpty()) {
+                continue;
+            }
+
+            $payload = $results->map(fn ($row) => [
+                'ranking_id'   => $ranking->id,
+                'federation_id'  => $row->federation_id,
+                'votes_count'  => (int) $row->votes_count,
+                'votes_sum'    => (float) $row->votes_sum,
+                'average_vote' => round((float) $row->average_vote, 2),
+                'created_at'   => now(),
+                'updated_at'   => now(),
+            ])->all();
+
+            RankingFederationAverage::insert($payload);
+
+            $this->info("Federation ranking {$ranking->id}: inserted " . count($payload) . " rows");
         }
 
         $this->info('Averages rebuild completed.');

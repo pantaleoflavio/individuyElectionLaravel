@@ -8,6 +8,8 @@ use App\Jobs\UpdateTagTeamAverage;
 use App\Jobs\UpdateWrestlerAverage;
 use App\Models\VoteTagTeam;
 use App\Models\VoteWrestler;
+use App\Jobs\UpdateFederationAverage;
+use App\Models\VoteFederation;
 
 class UpdateRankingAverage
 {
@@ -22,6 +24,10 @@ class UpdateRankingAverage
 
         if ($vote instanceof VoteTagTeam) {
             UpdateTagTeamAverage::dispatch($vote->ranking_id, $vote->tag_team_id);
+        }
+
+        if ($vote instanceof VoteFederation) {
+            UpdateFederationAverage::dispatch($vote->ranking_id, $vote->federation_id);
         }
     }
 }

@@ -197,4 +197,72 @@ class AdminCrudControllersTest extends TestCase
             'status' => 1,
         ]);
     }
+
+    public function test_admin_can_create_only_one_federation_ranking_from_dedicated_action(): void
+    {
+        $admin = $this->admin();
+
+        $first = $this->actingAs($admin)->post(route('admin.ranking.federation.create'));
+        $first->assertRedirect(route('admin.ranking'));
+        $first->assertSessionHas('success', 'Ranking federazioni creato con successo.');
+
+        $this->assertDatabaseHas('rankings', [
+            'type' => RankingType::Federation->value,
+            'name' => 'Ranking Federazioni',
+        ]);
+
+        $second = $this->actingAs($admin)->post(route('admin.ranking.federation.create'));
+        $second->assertRedirect(route('admin.ranking'));
+        $second->assertSessionHas('error', 'Il ranking federazioni esiste già.');
+
+        $this->assertSame(1, Ranking::where('type', RankingType::Federation->value)->count());
+    }
+
+    public function test_edit_federation_ranking_hides_filter_fields_and_update_resets_filters(): void
+    {
+        $admin = $this->admin();
+        $category = Category::factory()->create();
+        $federation = Federation::factory()->create();
+
+        $ranking = Ranking::factory()->create([
+            'type' => RankingType::Federation->value,
+            'category_id' => $category->id,
+            'federation_id' => $federation->id,
+            'country' => 'Italy',
+            'filter_type' => 'multiple',
+        ]);
+
+        $ranking->categories()->sync([$category->id]);
+        $ranking->federations()->sync([$federation->id]);
+        $ranking->rankingCountries()->create(['country' => 'Italy']);
+
+        $edit = $this->actingAs($admin)->get(route('admin.ranking.edit', $ranking->id));
+        $edit->assertOk();
+        $edit->assertDontSee('Categorie (facoltative, selezione multipla):');
+        $edit->assertDontSee('Federazioni (facoltative, selezione multipla):');
+        $edit->assertDontSee('Nazionalità (una o più, separate da virgola):');
+
+        $update = $this->actingAs($admin)->put(route('admin.ranking.update', $ranking->id), [
+            'name' => 'Federation Ranking Updated',
+            'description' => 'Updated',
+            'status' => 1,
+            // injected filter payload should be ignored for federation rankings
+            'category_ids' => [$category->id],
+            'federation_ids' => [$federation->id],
+            'countries_text' => 'Japan',
+        ]);
+
+        $update->assertRedirect(route('admin.ranking'));
+
+        $ranking->refresh();
+        $this->assertSame('Federation Ranking Updated', $ranking->name);
+        $this->assertNull($ranking->category_id);
+        $this->assertNull($ranking->federation_id);
+        $this->assertNull($ranking->country);
+        $this->assertSame('none', $ranking->filter_type);
+
+        $this->assertCount(0, $ranking->categories);
+        $this->assertCount(0, $ranking->federations);
+        $this->assertCount(0, $ranking->rankingCountries);
+    }
 }

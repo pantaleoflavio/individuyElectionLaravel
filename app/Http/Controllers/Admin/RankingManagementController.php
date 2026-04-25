@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\RankingType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRankingRequest;
 use App\Http\Requests\UpdateRankingRequest;
@@ -18,13 +19,21 @@ class RankingManagementController extends Controller
         $rankings = Ranking::with(['category', 'federation', 'categories', 'federations', 'rankingCountries'])->get();
         $categories = Category::all();
         $federations = Federation::all();
+        $federationRankingExists = Ranking::where('type', RankingType::Federation->value)->exists();
 
-        return view('admin.ranking', compact('rankings', 'categories', 'federations'));
+        return view('admin.ranking', compact('rankings', 'categories', 'federations', 'federationRankingExists'));
     }
 
     public function store(StoreRankingRequest $request)
     {
         $rankingAttributes = $request->validated();
+
+        if (($rankingAttributes['type'] ?? null) === RankingType::Federation->value
+            && Ranking::where('type', RankingType::Federation->value)->exists()) {
+            return back()
+                ->withInput()
+                ->with('error', 'È consentito un solo ranking federazioni.');
+        }
 
         $categoryIds = $this->normalizeIds($rankingAttributes['category_ids'] ?? [], $rankingAttributes['category_id'] ?? null);
         $federationIds = $this->normalizeIds($rankingAttributes['federation_ids'] ?? [], $rankingAttributes['federation_id'] ?? null);
@@ -60,6 +69,26 @@ class RankingManagementController extends Controller
         return redirect()->route('admin.ranking')->with('success', 'Ranking aggiunto con successo.');
     }
 
+    public function createFederationRanking()
+    {
+        $ranking = Ranking::firstOrCreate(
+            ['type' => RankingType::Federation->value],
+            [
+                'name' => 'Ranking Federazioni',
+                'description' => 'Classifica generale delle federazioni basata sui voti degli utenti.',
+                'status' => true,
+                'filter_type' => 'none',
+                'includes_inactive' => true,
+            ]
+        );
+
+        if (!$ranking->wasRecentlyCreated) {
+            return redirect()->route('admin.ranking')->with('error', 'Il ranking federazioni esiste già.');
+        }
+
+        return redirect()->route('admin.ranking')->with('success', 'Ranking federazioni creato con successo.');
+    }
+
     public function edit($id)
     {
         $ranking = Ranking::with(['categories', 'federations', 'rankingCountries'])->findOrFail($id);
@@ -75,17 +104,36 @@ class RankingManagementController extends Controller
         $ranking = Ranking::with(['categories', 'federations', 'rankingCountries'])->findOrFail($id);
         $validatedData = $request->validated();
 
-        $categoryIds = $this->normalizeIds($validatedData['category_ids'] ?? [], $validatedData['category_id'] ?? null);
-        $federationIds = $this->normalizeIds($validatedData['federation_ids'] ?? [], $validatedData['federation_id'] ?? null);
-        $countries = $this->normalizeCountries($validatedData['countries_text'] ?? null, $validatedData['country'] ?? null);
+        $isFederationRanking = $ranking->type === RankingType::Federation->value;
+
+        $categoryIds = $isFederationRanking
+            ? []
+            : $this->normalizeIds($validatedData['category_ids'] ?? [], $validatedData['category_id'] ?? null);
+        $federationIds = $isFederationRanking
+            ? []
+            : $this->normalizeIds($validatedData['federation_ids'] ?? [], $validatedData['federation_id'] ?? null);
+        $countries = $isFederationRanking
+            ? []
+            : $this->normalizeCountries($validatedData['countries_text'] ?? null, $validatedData['country'] ?? null);
 
         $validatedData['category_id'] = $categoryIds[0] ?? null;
         $validatedData['federation_id'] = $federationIds[0] ?? null;
         $validatedData['country'] = empty($countries) ? null : implode(', ', $countries);
-        $validatedData['filter_type'] = $this->resolveFilterType($categoryIds, $federationIds, $countries);
+        $validatedData['filter_type'] = $isFederationRanking
+            ? 'none'
+            : $this->resolveFilterType($categoryIds, $federationIds, $countries);
 
         try {
-            DB::transaction(function () use ($ranking, $validatedData, $categoryIds, $federationIds, $countries): void {
+            DB::transaction(function () use ($ranking, $validatedData, $categoryIds, $federationIds, $countries, $isFederationRanking): void {
+                if ($isFederationRanking) {
+                    $ranking->update([
+                        'category_id' => null,
+                        'federation_id' => null,
+                        'country' => null,
+                        'filter_type' => 'none',
+                    ]);
+                }    
+            
                 $ranking->update($validatedData);
                 $ranking->categories()->sync($categoryIds);
                 $ranking->federations()->sync($federationIds);

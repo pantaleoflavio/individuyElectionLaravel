@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Events\VoteAdded;
+use App\Http\Requests\StoreFederationVoteRequest;
 use App\Http\Requests\StoreTagTeamVoteRequest;
 use App\Http\Requests\StoreWrestlerVoteRequest;
+use App\Models\Federation;
 use App\Models\Ranking;
 use App\Models\TagTeam;
-use App\Models\Wrestler;
+use App\Models\VoteFederation;
 use App\Models\VoteTagTeam;
 use App\Models\VoteWrestler;
+use App\Models\Wrestler;
 use App\Services\VoteService;
 use Illuminate\Support\Facades\Auth;
 
@@ -55,6 +58,21 @@ class VoteController extends Controller
         ]);
     }
 
+    public function showFederationVoteForm(Federation $federation, Ranking $ranking)
+    {
+        $existingVote = VoteFederation::where('user_id', Auth::id())
+            ->where('federation_id', $federation->id)
+            ->where('ranking_id', $ranking->id)
+            ->value('vote');
+
+        return view('votes.federation.vote', [
+            'federation' => $federation,
+            'ranking' => $ranking,
+            'existingVote' => $existingVote,
+            'voteOptions' => $this->generateVoteOptions(),
+        ]);
+    }
+
     private function generateVoteOptions()
     {
         $options = [];
@@ -93,6 +111,22 @@ class VoteController extends Controller
 
         event(new VoteAdded($vote));
     
+        return redirect()->route('user.profile')->with('success', 'Il tuo voto è stato salvato con successo.');
+    }
+
+    public function federationVoteStore(StoreFederationVoteRequest $request)
+    {
+        $validated = $request->validated();
+        $result = $this->voteService->createFederationVote((int) Auth::id(), $validated);
+
+        if (isset($result['error'])) {
+            return redirect()->back()->with('error', $result['error']);
+        }
+
+        $vote = $result['vote'];
+
+        event(new VoteAdded($vote));
+
         return redirect()->route('user.profile')->with('success', 'Il tuo voto è stato salvato con successo.');
     }
 }

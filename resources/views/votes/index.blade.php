@@ -14,7 +14,7 @@
     <x-main-card 
         title="Federazioni" 
         text="Tutte le votazioni relative alle Federazioni" 
-        href="/" 
+        href="/ranking-list-federation" 
         linkLabel="Federazioni" 
     />
 </x-layout>

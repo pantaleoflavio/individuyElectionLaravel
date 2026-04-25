@@ -6,6 +6,7 @@ use App\Enums\RankingType;
 use App\Models\Ranking;
 use App\Models\RankingTagTeamAverage;
 use App\Models\RankingWrestlerAverage;
+use App\Models\RankingFederationAverage;
 
 class RankingController extends Controller
 {
@@ -46,6 +47,16 @@ class RankingController extends Controller
     
         return view('votes.tag_team.ranking-list', ['rankings' => $rankings]);
     }
+
+    public function ranking_list_federation()
+    {
+        $rankings = Ranking::where('status', true)
+            ->get(['id', 'name', 'description', 'type', 'filter_type', 'category_id', 'federation_id', 'country', 'includes_inactive'])
+            ->filter(fn (Ranking $ranking) => $this->isRankingType($ranking, RankingType::Federation))
+            ->values();
+
+        return view('votes.federation.ranking-list', ['rankings' => $rankings]);
+    }
     
     public function show($rankingId)
     {
@@ -53,7 +64,7 @@ class RankingController extends Controller
     
         $participants = collect();
 
-        if ($ranking->type === 'wrestler') {
+        if ($ranking->type === RankingType::Wrestler->value) {
             $participants = RankingWrestlerAverage::with(RankingType::Wrestler->value)
                 ->where('ranking_id', $rankingId)
                 ->orderByDesc('average_vote')
@@ -78,6 +89,18 @@ class RankingController extends Controller
                         'votes_count'   => $rta->votes_count,
                     ];
                 });
+        } elseif ($ranking->type === RankingType::Federation->value) {
+            $participants = RankingFederationAverage::with('federation')
+                ->where('ranking_id', $rankingId)
+                ->orderByDesc('average_vote')
+                ->get()
+                ->map(function ($rfa) {
+                    return (object) [
+                        'participant'   => $rfa->federation,
+                        'average_vote'  => $rfa->average_vote,
+                        'votes_count'   => $rfa->votes_count,
+                    ];
+                });
         }
 
         return view('rankings.show', compact('ranking', 'participants'));
@@ -94,6 +117,6 @@ class RankingController extends Controller
             return '';
         }
 
-         return str_replace(['_', '-', ' '], '', strtolower(trim($value)));
+        return str_replace(['_', '-', ' '], '', strtolower(trim($value)));
     }
 }

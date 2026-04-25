@@ -13,7 +13,6 @@
             {{ session('success') }}
         </div>
     @endif
-
     <x-main-card 
         title="Votazioni" 
         text="Questa sezione permetterà agli utenti di votare per i loro show o incontri preferiti." 

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\RankingCountry;
+use App\Models\RankingFederationAverage;
+use App\Models\VoteFederation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -74,5 +76,15 @@ class Ranking extends Model
     public function tagTeamAverages()
     {
         return $this->hasMany(RankingTagTeamAverage::class);
+    }
+
+    public function votesFederation()
+    {
+        return $this->hasMany(VoteFederation::class);
+    }
+
+    public function federationAverages()
+    {
+        return $this->hasMany(RankingFederationAverage::class);
     }
 }
