@@ -43,7 +43,7 @@ class FederationManagementController extends Controller
 
         $federation->update($validatedData);
 
-        return redirect()->route('admin.federation.edit', $federation->id)->with('success', 'Federazione aggiornata con successo');
+        return redirect()->route('admin.federation')->with('success', 'Federazione aggiornata con successo');
     }
 
     public function destroy($id)

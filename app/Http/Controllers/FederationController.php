@@ -31,7 +31,15 @@ class FederationController extends Controller
             ->distinct()
             ->get();
 
-        $tagTeams = TagTeam::where('federation_id', $id)->get();
+        $tagTeams = TagTeam::with(['federations', 'federation'])
+            ->where(function ($query) use ($id) {
+                $query->where('federation_id', $id)
+                    ->orWhereHas('federations', function ($federationsQuery) use ($id) {
+                        $federationsQuery->where('federations.id', $id);
+                    });
+            })
+            ->distinct()
+            ->get();
 
         return view('federations.show', compact('federation', 'wrestlers', 'tagTeams'));
     }

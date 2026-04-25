@@ -1,6 +1,22 @@
 <x-admin-layout>
     <h2 class="text-center">Aggiungi Wrestler</h2>
-    <div class="d-flex justify-content-center">
+
+        @if(session('error'))
+            <div class="alert alert-danger w-50 mx-auto">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger w-50 mx-auto">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        <div class="d-flex justify-content-center">
         <form action="{{ route('admin.wrestler.store') }}" method="post" class="w-50">
         @csrf
             <div class="form-group mb-3">
@@ -9,7 +25,7 @@
             </div>
             <div class="form-group mb-3">
                 <label for="description">Descrizione:</label>
-                <textarea name="description" id="description" class="form-control" rows="3" required></textarea>
+                <textarea name="description" id="description" class="form-control" rows="3"></textarea>
             </div>
             <div class="form-group mb-3">
                 <label for="image_url">Immagine URL (facoltativa):</label>

@@ -7,6 +7,8 @@ use App\Traits\HasParticipantFormOptions;
 use App\Http\Requests\StoreWrestlerRequest;
 use App\Http\Requests\UpdateWrestlerRequest;
 use App\Models\Wrestler;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class WrestlerManagementController extends Controller
 {
@@ -30,18 +32,31 @@ class WrestlerManagementController extends Controller
     {
         $validated = $request->validated();
 
-        $wrestler = Wrestler::create([
-            'name' => $validated['name'],
-            'description' => $validated['description'],
-            'image_url' => $validated['image_url'] ?? null,
-            'country' => $validated['country'],
-            'category_id' => $validated['category_ids'][0],
-            'federation_id' => $validated['federation_ids'][0],
-            'is_active' => $validated['is_active'],
-        ]);
+        try {
+            DB::transaction(function () use ($validated): void {
+                $wrestler = Wrestler::create([
+                    'name' => $validated['name'],
+                    'description' => $validated['description'],
+                    'image_url' => $validated['image_url'] ?? null,
+                    'country' => $validated['country'],
+                    'category_id' => $validated['category_ids'][0],
+                    'federation_id' => $validated['federation_ids'][0],
+                    'is_active' => $validated['is_active'],
+                ]);
 
-        $wrestler->categories()->sync($validated['category_ids']);
-        $wrestler->federations()->sync($validated['federation_ids']);
+                $wrestler->categories()->sync($validated['category_ids']);
+                $wrestler->federations()->sync($validated['federation_ids']);
+            });
+        } catch (\Throwable $exception) {
+            Log::error('Errore durante il salvataggio del Wrestler.', [
+                'message' => $exception->getMessage(),
+                'trace' => $exception->getTraceAsString(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Impossibile salvare il Wrestler.');
+        }
 
         return redirect()->route('admin.wrestler')->with('success', 'Wrestler aggiunto con successo.');
     }
@@ -59,18 +74,32 @@ class WrestlerManagementController extends Controller
         $wrestler = Wrestler::findOrFail($id);
         $validated = $request->validated();
 
-        $wrestler->update([
-            'name' => $validated['name'],
-            'description' => $validated['description'],
-            'image_url' => $validated['image_url'] ?? null,
-            'country' => $validated['country'],
-            'category_id' => $validated['category_ids'][0],
-            'federation_id' => $validated['federation_ids'][0],
-            'is_active' => $validated['is_active'],
-        ]);
+        try {
+            DB::transaction(function () use ($wrestler, $validated): void {
+                $wrestler->update([
+                    'name' => $validated['name'],
+                    'description' => $validated['description'],
+                    'image_url' => $validated['image_url'] ?? null,
+                    'country' => $validated['country'],
+                    'category_id' => $validated['category_ids'][0],
+                    'federation_id' => $validated['federation_ids'][0],
+                    'is_active' => $validated['is_active'],
+                ]);
 
-        $wrestler->categories()->sync($validated['category_ids']);
-        $wrestler->federations()->sync($validated['federation_ids']);
+                $wrestler->categories()->sync($validated['category_ids']);
+                $wrestler->federations()->sync($validated['federation_ids']);
+            });
+        } catch (\Throwable $exception) {
+            Log::error('Errore durante l\'aggiornamento del Wrestler.', [
+                'wrestler_id' => $wrestler->id,
+                'message' => $exception->getMessage(),
+                'trace' => $exception->getTraceAsString(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Impossibile aggiornare il Wrestler. Controlla i log applicativi.');
+        }
 
         return redirect()->route('admin.wrestler')->with('success', 'Wrestler aggiornato con successo');
     }

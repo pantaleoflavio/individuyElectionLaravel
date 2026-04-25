@@ -16,9 +16,19 @@
 
     <h2 class="text-center">Modifica Ranking: {{ $ranking->name }}</h2>
 
-    @if(session('success'))
-        <div class="alert alert-success text-center">
-            {{ session('success') }}
+    @if(session('error'))
+        <div class="alert alert-danger w-50 mx-auto">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="alert alert-danger w-50 mx-auto">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
     @endif
 

@@ -43,7 +43,7 @@ class CategoryManagementController extends Controller
 
         $category->update($validatedData);
 
-        return redirect()->route('admin.category.edit', $category->id)->with('success', 'Categoria aggiornata con successo');
+        return redirect()->route('admin.category')->with('success', 'Categoria aggiornata con successo');
     }
 
     public function destroy($id)
