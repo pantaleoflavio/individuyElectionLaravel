@@ -36,7 +36,7 @@ class WrestlerManagementController extends Controller
             DB::transaction(function () use ($validated): void {
                 $wrestler = Wrestler::create([
                     'name' => $validated['name'],
-                    'description' => $validated['description'],
+                    'description' => $validated['description'] ?? '',
                     'image_url' => $validated['image_url'] ?? null,
                     'country' => $validated['country'],
                     'is_active' => $validated['is_active'],
@@ -76,7 +76,7 @@ class WrestlerManagementController extends Controller
             DB::transaction(function () use ($wrestler, $validated): void {
                 $wrestler->update([
                     'name' => $validated['name'],
-                    'description' => $validated['description'],
+                    'description' => $validated['description'] ?? '',
                     'image_url' => $validated['image_url'] ?? null,
                     'country' => $validated['country'],
                     'is_active' => $validated['is_active'],
