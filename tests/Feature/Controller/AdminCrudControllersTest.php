@@ -57,10 +57,11 @@ class AdminCrudControllersTest extends TestCase
         $tagTeam = TagTeam::factory()->create([
             'name' => 'Old Name',
             'description' => 'Old description',
-            'category_id' => $category->id,
-            'federation_id' => $federation->id,
             'is_active' => true,
         ]);
+
+        $tagTeam->categories()->sync([$category->id]);
+        $tagTeam->federations()->sync([$federation->id]);
 
         $response = $this->actingAs($admin)->put(route('admin.tag_team.update', $tagTeam->id), [
             'name' => 'New Name',
@@ -77,8 +78,6 @@ class AdminCrudControllersTest extends TestCase
             'id' => $tagTeam->id,
             'name' => 'New Name',
             'description' => 'New description',
-            'category_id' => $newCategory->id,
-            'federation_id' => $newFederation->id,
         ]);
 
         $this->assertDatabaseHas('tag_team_category', [
@@ -103,10 +102,11 @@ class AdminCrudControllersTest extends TestCase
         $wrestler = Wrestler::factory()->create([
             'name' => 'Old Wrestler',
             'description' => 'Old description',
-            'category_id' => $category->id,
-            'federation_id' => $federation->id,
             'is_active' => true,
         ]);
+
+        $wrestler->categories()->sync([$category->id]);
+        $wrestler->federations()->sync([$federation->id]);
 
         $response = $this->actingAs($admin)->put(route('admin.wrestler.update', $wrestler->id), [
             'name' => 'New Wrestler',
@@ -124,8 +124,6 @@ class AdminCrudControllersTest extends TestCase
             'id' => $wrestler->id,
             'name' => 'New Wrestler',
             'description' => 'New description',
-            'category_id' => $newCategory->id,
-            'federation_id' => $newFederation->id,
         ]);
 
         $this->assertDatabaseHas('wrestler_category', [

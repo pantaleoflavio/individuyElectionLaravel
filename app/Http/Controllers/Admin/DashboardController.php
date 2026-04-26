@@ -14,7 +14,10 @@ class DashboardController extends Controller
     public function index()
     {
         $admin = Auth::user();
-        $federationsWithCounts = Federation::withCount(['wrestler', 'tag_team'])->get();
+        $federationsWithCounts = Federation::withCount([
+            'wrestlers as wrestler_count',
+            'tagTeams as tag_team_count',
+        ])->get();
         $wrestlerRankings = Ranking::where('type', RankingType::Wrestler->value)->withCount('votesWrestler')->get();
         $tagTeamRankings = Ranking::where('type', RankingType::TagTeam->value)->withCount('votesTagTeam')->get();
         $totalUsers = User::count();

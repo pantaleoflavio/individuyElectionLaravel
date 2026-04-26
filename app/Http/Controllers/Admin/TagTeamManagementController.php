@@ -16,7 +16,7 @@ class TagTeamManagementController extends Controller
     
     public function index()
     {
-        $tagTeams = TagTeam::with(['categories', 'federations', 'category', 'federation'])->get();
+        $tagTeams = TagTeam::with(['categories', 'federations'])->get();
 
         return view('admin.tag_team', compact('tagTeams'));
     }
@@ -35,11 +35,9 @@ class TagTeamManagementController extends Controller
             DB::transaction(function () use ($validated): void {
                 $tagTeam = TagTeam::create([
                     'name' => $validated['name'],
-                    'description' => $validated['description'],
+                    'description' => $validated['description'] ?? '',
                     'image_url' => $validated['image_url'] ?? null,
                     'country' => $validated['country'],
-                    'category_id' => $validated['category_ids'][0],
-                    'federation_id' => $validated['federation_ids'][0],
                     'is_active' => $validated['is_active'],
                 ]);
 
@@ -77,11 +75,9 @@ class TagTeamManagementController extends Controller
             DB::transaction(function () use ($tagTeam, $validated): void {
                 $tagTeam->update([
                     'name' => $validated['name'],
-                    'description' => $validated['description'],
+                    'description' => $validated['description'] ?? '',
                     'image_url' => $validated['image_url'] ?? null,
                     'country' => $validated['country'],
-                    'category_id' => $validated['category_ids'][0],
-                    'federation_id' => $validated['federation_ids'][0],
                     'is_active' => $validated['is_active'],
                 ]);
 

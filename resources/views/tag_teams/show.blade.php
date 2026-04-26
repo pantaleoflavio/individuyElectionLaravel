@@ -29,10 +29,10 @@
 
     <p>
         <strong>Categorie:</strong>
-        {{ $tagTeam->categories->pluck('name')->merge($tagTeam->category ? [$tagTeam->category->name] : [])->unique()->implode(', ') ?: 'Nessuna' }}
+        {{ $tagTeam->categories->pluck('name')->unique()->implode(', ') ?: 'Nessuna' }}
     </p>
     <p>
         <strong>Federazioni:</strong>
-        {{ $tagTeam->federations->pluck('name')->merge($tagTeam->federation ? [$tagTeam->federation->name] : [])->unique()->implode(', ') ?: 'Nessuna' }}
+         {{ $tagTeam->federations->pluck('name')->unique()->implode(', ') ?: 'Nessuna' }}
     </p>
 </x-layout>

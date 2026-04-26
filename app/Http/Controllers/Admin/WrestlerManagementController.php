@@ -17,7 +17,7 @@ class WrestlerManagementController extends Controller
 
     public function index()
     {
-        $wrestlers = Wrestler::with(['categories', 'federations', 'category', 'federation'])->get();
+        $wrestlers = Wrestler::with(['categories', 'federations'])->get();
 
         return view('admin.wrestler', compact('wrestlers'));
     }
@@ -39,8 +39,6 @@ class WrestlerManagementController extends Controller
                     'description' => $validated['description'],
                     'image_url' => $validated['image_url'] ?? null,
                     'country' => $validated['country'],
-                    'category_id' => $validated['category_ids'][0],
-                    'federation_id' => $validated['federation_ids'][0],
                     'is_active' => $validated['is_active'],
                 ]);
 
@@ -81,8 +79,6 @@ class WrestlerManagementController extends Controller
                     'description' => $validated['description'],
                     'image_url' => $validated['image_url'] ?? null,
                     'country' => $validated['country'],
-                    'category_id' => $validated['category_ids'][0],
-                    'federation_id' => $validated['federation_ids'][0],
                     'is_active' => $validated['is_active'],
                 ]);
 

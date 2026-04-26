@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TagTeam;
-use App\Models\Wrestler;
 use App\Models\Federation;
 use App\Services\CandidateService;
 use Illuminate\Http\Request;
@@ -44,24 +42,12 @@ class FederationController extends Controller
     {
         $federation = Federation::findOrFail($id);
 
-        $wrestlers = Wrestler::with(['federations', 'federation'])
-            ->where(function ($query) use ($id) {
-                $query->where('federation_id', $id)
-                    ->orWhereHas('federations', function ($federationsQuery) use ($id) {
-                        $federationsQuery->where('federations.id', $id);
-                    });
-            })
-            ->distinct()
+        $wrestlers = $federation->wrestlers()
+            ->with(['federations'])
             ->get();
 
-        $tagTeams = TagTeam::with(['federations', 'federation'])
-            ->where(function ($query) use ($id) {
-                $query->where('federation_id', $id)
-                    ->orWhereHas('federations', function ($federationsQuery) use ($id) {
-                        $federationsQuery->where('federations.id', $id);
-                    });
-            })
-            ->distinct()
+        $tagTeams = $federation->tagTeams()
+            ->with(['federations'])
             ->get();
 
         return view('federations.show', compact('federation', 'wrestlers', 'tagTeams'));

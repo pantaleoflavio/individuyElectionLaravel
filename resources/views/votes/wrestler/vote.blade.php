@@ -20,7 +20,7 @@
     <div><strong>Descrizione:</strong> {{ $wrestler->description }}</div>
     <div>
         <strong>Federazioni:</strong>
-        {{ $wrestler->federations->pluck('name')->implode(', ') ?: ($wrestler->federation->name ?? 'Nessuna Federazione') }}
+        {{ $wrestler->federations->pluck('name')->implode(', ') ?: 'Nessuna Federazione' }}
     </div>
 
     <form action="{{ route('vote.wrestler.store') }}" method="POST">

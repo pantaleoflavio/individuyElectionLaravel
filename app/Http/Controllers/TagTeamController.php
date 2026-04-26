@@ -14,7 +14,7 @@ class TagTeamController extends Controller
 
     public function show(TagTeam $tagTeam)
     {
-        $tagTeam->load(['categories', 'federations', 'category', 'federation']);
+        $tagTeam->load(['categories', 'federations']);
 
         return view('tag_teams.show', [
             'tagTeam' => $tagTeam,

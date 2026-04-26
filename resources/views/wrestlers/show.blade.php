@@ -29,10 +29,9 @@
 
     <p>
         <strong>Categorie:</strong>
-        {{ $wrestler->categories->pluck('name')->merge($wrestler->category ? [$wrestler->category->name] : [])->unique()->implode(', ') ?: 'Nessuna' }}
+         {{ $wrestler->categories->pluck('name')->unique()->implode(', ') ?: 'Nessuna' }}
     </p>
     <p>
         <strong>Federazioni:</strong>
-        {{ $wrestler->federations->pluck('name')->merge($wrestler->federation ? [$wrestler->federation->name] : [])->unique()->implode(', ') ?: 'Nessuna' }}
-    </p>
+        {{ $wrestler->federations->pluck('name')->unique()->implode(', ') ?: 'Nessuna' }}
 </x-layout>

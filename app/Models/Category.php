@@ -20,4 +20,14 @@ class Category extends Model
     {
         return $this->hasMany(Ranking::class);
     }
+
+    public function wrestlers()
+    {
+        return $this->belongsToMany(Wrestler::class, 'wrestler_category')->withTimestamps();
+    }
+
+    public function tagTeams()
+    {
+        return $this->belongsToMany(TagTeam::class, 'tag_team_category')->withTimestamps();
+    }
 }

@@ -22,8 +22,6 @@ class WrestlerControllerTest extends TestCase
             'description' => 'Main event wrestler',
             'country' => 'Japan',
             'image_url' => 'https://example.com/okada.jpg',
-            'category_id' => $category->id,
-            'federation_id' => $federation->id,
         ]);
 
         $wrestler->categories()->sync([$category->id]);

@@ -44,7 +44,7 @@ class VoteController extends Controller
 
     public function showTagTeamVoteForm(TagTeam $tagTeam, Ranking $ranking)
     {
-        $tagTeam->load(['federations', 'federation']);
+        $tagTeam->load(['federations']);
         $existingVote = VoteTagTeam::where('user_id', Auth::id())
             ->where('tag_team_id', $tagTeam->id)
             ->where('ranking_id', $ranking->id)

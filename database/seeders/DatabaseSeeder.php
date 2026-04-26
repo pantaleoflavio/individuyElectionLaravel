@@ -48,12 +48,23 @@ class DatabaseSeeder extends Seeder
         $users = User::pluck('id');
 
         // VOTI WRESTLER
-        $wrestlerRankings = Ranking::where('type', RankingType::Wrestler->value)->get();
+         $wrestlerRankings = Ranking::with('categories')
+            ->where('type', RankingType::Wrestler->value)
+            ->get();
 
         foreach ($wrestlerRankings as $ranking) {
+            $categoryIds = $ranking->categories->pluck('id')->all();
+
+            if (empty($categoryIds) && $ranking->category_id) {
+                $categoryIds = [$ranking->category_id];
+            }
             $candidateIds = Wrestler::query()
-                ->where('category_id', $ranking->category_id)
                 ->where('is_active', true)
+                ->when(!empty($categoryIds), function ($query) use ($categoryIds) {
+                    $query->whereHas('categories', function ($categoryQuery) use ($categoryIds) {
+                        $categoryQuery->whereIn('categories.id', $categoryIds);
+                    });
+                })
                 ->pluck('id');
 
             if ($candidateIds->isEmpty()) {
@@ -80,12 +91,24 @@ class DatabaseSeeder extends Seeder
         }
 
         // VOTI TAG TEAM
-        $tagTeamRankings = Ranking::where('type', RankingType::TagTeam->value)->get();
+        $tagTeamRankings = Ranking::with('categories')
+            ->where('type', RankingType::TagTeam->value)
+            ->get();
 
         foreach ($tagTeamRankings as $ranking) {
+            $categoryIds = $ranking->categories->pluck('id')->all();
+
+            if (empty($categoryIds) && $ranking->category_id) {
+                $categoryIds = [$ranking->category_id];
+            }
+
             $candidateIds = TagTeam::query()
-                ->where('category_id', $ranking->category_id)
                 ->where('is_active', true)
+                ->when(!empty($categoryIds), function ($query) use ($categoryIds) {
+                    $query->whereHas('categories', function ($categoryQuery) use ($categoryIds) {
+                        $categoryQuery->whereIn('categories.id', $categoryIds);
+                    });
+                })
                 ->pluck('id');
 
             if ($candidateIds->isEmpty()) {
