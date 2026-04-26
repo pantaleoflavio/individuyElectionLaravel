@@ -19,8 +19,18 @@ class Federation extends Model
         return $this->hasMany(Wrestler::class);
     }
 
+    public function wrestlers()
+    {
+        return $this->belongsToMany(Wrestler::class, 'federation_wrestler')->withTimestamps();
+    }
+
     public function tag_team()
     {
         return $this->hasMany(TagTeam::class);
+    }
+
+    public function tagTeams()
+    {
+        return $this->belongsToMany(TagTeam::class, 'federation_tag_team')->withTimestamps();
     }
 }

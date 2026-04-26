@@ -20,10 +20,10 @@ class TagTeamControllerTest extends TestCase
         $tagTeam = TagTeam::factory()->create([
             'name' => 'The Golden Pair',
             'description' => 'High flying duo',
-            'category_id' => $category->id,
-            'federation_id' => $federation->id,
         ]);
-
+        
+        $tagTeam->categories()->sync([$category->id]);
+        $tagTeam->federations()->sync([$federation->id]);
         $response = $this->get(route('tag-teams.show', $tagTeam->id));
 
         $response->assertOk();

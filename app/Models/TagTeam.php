@@ -9,6 +9,9 @@ class TagTeam extends Model
 {
     use HasFactory;
 
+    protected ?int $legacyCategoryId = null;
+    protected ?int $legacyFederationId = null;
+
     protected $fillable = [
         'name',
         'description',
@@ -19,20 +22,34 @@ class TagTeam extends Model
         'is_active',
     ];
 
-    public function category()
+    protected static function booted(): void
     {
-        return $this->belongsTo(Category::class);
+        static::saved(function (self $tagTeam): void {
+            if ($tagTeam->legacyCategoryId) {
+                $tagTeam->categories()->syncWithoutDetaching([$tagTeam->legacyCategoryId]);
+                $tagTeam->legacyCategoryId = null;
+            }
+
+            if ($tagTeam->legacyFederationId) {
+                $tagTeam->federations()->syncWithoutDetaching([$tagTeam->legacyFederationId]);
+                $tagTeam->legacyFederationId = null;
+            }
+        });
+    }
+    
+    public function setCategoryIdAttribute($value): void
+    {
+        $this->legacyCategoryId = $value ? (int) $value : null;
     }
 
+    public function setFederationIdAttribute($value): void
+    {
+        $this->legacyFederationId = $value ? (int) $value : null;
+    }
 
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'tag_team_category')->withTimestamps();
-    }
-
-    public function federation()
-    {
-        return $this->belongsTo(Federation::class);
     }
 
     public function federations()

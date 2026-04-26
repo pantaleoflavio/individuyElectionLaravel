@@ -9,6 +9,9 @@ class Wrestler extends Model
 {
     use HasFactory;
 
+    protected ?int $legacyCategoryId = null;
+    protected ?int $legacyFederationId = null;
+
     protected $fillable = [
         'name',
         'description',
@@ -19,19 +22,34 @@ class Wrestler extends Model
         'is_active',
     ];
 
-    public function category()
+    protected static function booted(): void
     {
-        return $this->belongsTo(Category::class);
+        static::saved(function (self $wrestler): void {
+            if ($wrestler->legacyCategoryId) {
+                $wrestler->categories()->syncWithoutDetaching([$wrestler->legacyCategoryId]);
+                $wrestler->legacyCategoryId = null;
+            }
+
+            if ($wrestler->legacyFederationId) {
+                $wrestler->federations()->syncWithoutDetaching([$wrestler->legacyFederationId]);
+                $wrestler->legacyFederationId = null;
+            }
+        });
     }
 
-        public function categories()
+    public function setCategoryIdAttribute($value): void
+    {
+        $this->legacyCategoryId = $value ? (int) $value : null;
+    }
+
+    public function setFederationIdAttribute($value): void
+    {
+        $this->legacyFederationId = $value ? (int) $value : null;
+    }
+
+    public function categories()
     {
         return $this->belongsToMany(Category::class, 'wrestler_category')->withTimestamps();
-    }
-
-    public function federation()
-    {
-        return $this->belongsTo(Federation::class);
     }
 
     public function federations()

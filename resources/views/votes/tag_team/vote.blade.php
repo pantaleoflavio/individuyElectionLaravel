@@ -27,7 +27,7 @@
 
     <div>
         <strong>Federazioni:</strong>
-        {{ $tagTeam->federations->pluck('name')->implode(', ') ?: ($tagTeam->federation->name ?? 'Nessuna Federazione') }}
+        {{ $tagTeam->federations->pluck('name')->implode(', ') ?: 'Nessuna Federazione' }}
     </div>
 
     <form action="{{ route('vote.tagTeam.store') }}" method="POST">

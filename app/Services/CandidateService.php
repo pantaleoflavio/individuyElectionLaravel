@@ -41,10 +41,9 @@ class CandidateService
 
         if (!empty($categoryIds)) {
             $query->where(function ($subQuery) use ($categoryIds) {
-                $subQuery->whereIn('category_id', $categoryIds);
-
+               
                 if (method_exists($subQuery->getModel(), 'categories')) {
-                    $subQuery->orWhereHas('categories', function ($categoriesQuery) use ($categoryIds) {
+                    $subQuery->whereHas('categories', function ($categoriesQuery) use ($categoryIds) {
                         $categoriesQuery->whereIn('categories.id', $categoryIds);
                     });
                 }
@@ -53,10 +52,9 @@ class CandidateService
 
         if (!empty($federationIds)) {
             $query->where(function ($subQuery) use ($federationIds) {
-                $subQuery->whereIn('federation_id', $federationIds);
 
                 if (method_exists($subQuery->getModel(), 'federations')) {
-                    $subQuery->orWhereHas('federations', function ($federationsQuery) use ($federationIds) {
+                    $subQuery->whereHas('federations', function ($federationsQuery) use ($federationIds) {
                         $federationsQuery->whereIn('federations.id', $federationIds);
                     });
                 }

@@ -38,10 +38,9 @@ class FederationControllerTest extends TestCase
 
         $pivotOnlyWrestler = Wrestler::factory()->create([
             'name' => 'Will Ospreay',
-            'category_id' => $category->id,
-            'federation_id' => $otherFederation->id,
         ]);
 
+        $pivotOnlyWrestler->categories()->sync([$category->id]);
         $pivotOnlyWrestler->federations()->sync([$federation->id, $otherFederation->id]);
 
         $response = $this->get(route('federations.show', $federation->id));

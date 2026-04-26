@@ -15,7 +15,7 @@ class WrestlerController extends Controller
 
     public function show(Wrestler $wrestler)
     {
-        $wrestler->load(['categories', 'federations', 'category', 'federation']);
+        $wrestler->load(['categories', 'federations']);
 
         return view('wrestlers.show', [
             'wrestler' => $wrestler,

@@ -23,8 +23,8 @@ class SearchControllerTest extends TestCase
 
     public function test_search_returns_matching_results_for_each_entity(): void
     {
-        Wrestler::factory()->create(['name' => 'Kenny Omega', 'category_id' => null, 'federation_id' => null]);
-        TagTeam::factory()->create(['name' => 'Omega Lovers', 'category_id' => null, 'federation_id' => null]);
+        Wrestler::factory()->create(['name' => 'Kenny Omega']);
+        TagTeam::factory()->create(['name' => 'Omega Lovers']);
         Federation::factory()->create(['name' => 'Omega Wrestling']);
         Ranking::factory()->create(['name' => 'Best Omega Ranking']);
 

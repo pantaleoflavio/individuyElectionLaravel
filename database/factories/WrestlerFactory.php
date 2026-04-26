@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
+use App\Models\Federation;
+use App\Models\Wrestler;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,6 +12,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class WrestlerFactory extends Factory
 {
+     protected $model = Wrestler::class;
+
     /**
      * Define the model's default state.
      *
@@ -20,9 +25,20 @@ class WrestlerFactory extends Factory
             'name' => $this->faker->name(),
             'description' => $this->faker->sentence(),
             'country' => $this->faker->country(),
-            'category_id' => $this->faker->numberBetween(1, 10),
+            'category_id' => Category::query()->inRandomOrder()->value('id') ?? Category::factory(),
             'is_active' => $this->faker->boolean(80),
-            'federation_id' => $this->faker->numberBetween(1, 5),
+            'federation_id' => Federation::query()->inRandomOrder()->value('id') ?? Federation::factory(),
         ];
+    }
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Wrestler $wrestler): void {
+            $categoryId = Category::query()->inRandomOrder()->value('id') ?? Category::factory()->create()->id;
+            $federationId = Federation::query()->inRandomOrder()->value('id') ?? Federation::factory()->create()->id;
+
+            $wrestler->categories()->syncWithoutDetaching([$categoryId]);
+            $wrestler->federations()->syncWithoutDetaching([$federationId]);
+        });
     }
 }
